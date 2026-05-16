@@ -1,0 +1,275 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "wensity",
+  "homepage": "https://wensity.com",
+  "count": 14,
+  "items": [
+    {
+      "name": "liquid-multimodal-input",
+      "type": "registry:block",
+      "title": "Liquid Multimodal Input",
+      "description": "Expanding prompt area with a glowing drop-zone.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/liquid-multimodal-input.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/liquid-multimodal-input",
+        "cliInstall": "pnpm dlx wensity@latest add liquid-multimodal-input"
+      }
+    },
+    {
+      "name": "stream-reveal-typography",
+      "type": "registry:block",
+      "title": "Stream Reveal Typography",
+      "description": "LLM token streaming, without the snap.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/stream-reveal-typography.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/stream-reveal-typography",
+        "cliInstall": "pnpm dlx wensity@latest add stream-reveal-typography"
+      }
+    },
+    {
+      "name": "generative-skeleton-mesh",
+      "type": "registry:block",
+      "title": "Generative Skeleton Mesh",
+      "description": "An organic loading state — not a spinner.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/generative-skeleton-mesh.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/generative-skeleton-mesh",
+        "cliInstall": "pnpm dlx wensity@latest add generative-skeleton-mesh"
+      }
+    },
+    {
+      "name": "voice-aurora-wave",
+      "type": "registry:block",
+      "title": "Voice Aurora Wave",
+      "description": "A breathing voice orb — never jittery, always organic.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/voice-aurora-wave.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/voice-aurora-wave",
+        "cliInstall": "pnpm dlx wensity@latest add voice-aurora-wave"
+      }
+    },
+    {
+      "name": "model-context-switcher",
+      "type": "registry:block",
+      "title": "Model Context Switcher",
+      "description": "A Radix dropdown that scales out from the trigger and glides between options.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react",
+        "@radix-ui/react-dropdown-menu"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/model-context-switcher.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/model-context-switcher",
+        "cliInstall": "pnpm dlx wensity@latest add model-context-switcher"
+      }
+    },
+    {
+      "name": "magnetic-prompt-suggestions",
+      "type": "registry:block",
+      "title": "Magnetic Prompt Suggestions",
+      "description": "Cards that elastically pull toward your cursor before you click.",
+      "categories": [
+        "Agentic AI Interfaces",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/magnetic-prompt-suggestions.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/magnetic-prompt-suggestions",
+        "cliInstall": "pnpm dlx wensity@latest add magnetic-prompt-suggestions"
+      }
+    },
+    {
+      "name": "dynamic-island-toast",
+      "type": "registry:block",
+      "title": "Dynamic Island Toast",
+      "description": "A pixel-faithful Apple Dynamic Island — morphs, splits, and hosts live activities.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/dynamic-island-toast.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/dynamic-island-toast",
+        "cliInstall": "pnpm dlx wensity@latest add dynamic-island-toast"
+      }
+    },
+    {
+      "name": "parallax-tilt-card-3d",
+      "type": "registry:block",
+      "title": "3D Parallax Tilt Card",
+      "description": "A card that tilts to the cursor — with real reflected glare.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/parallax-tilt-card-3d.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/parallax-tilt-card-3d",
+        "cliInstall": "pnpm dlx wensity@latest add parallax-tilt-card-3d"
+      }
+    },
+    {
+      "name": "infinite-marquee",
+      "type": "registry:block",
+      "title": "Infinite Marquee",
+      "description": "Seamless, GPU-only logo strip — never stutters.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/infinite-marquee.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/infinite-marquee",
+        "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
+      }
+    },
+    {
+      "name": "apple-sticky-scroll-sequence",
+      "type": "registry:block",
+      "title": "Apple-Style Sticky Scroll",
+      "description": "A pinned cinematic section that morphs in lock-step with scroll.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/apple-sticky-scroll-sequence.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/apple-sticky-scroll-sequence",
+        "cliInstall": "pnpm dlx wensity@latest add apple-sticky-scroll-sequence"
+      }
+    },
+    {
+      "name": "morphing-shape-background",
+      "type": "registry:block",
+      "title": "Morphing Shape Background",
+      "description": "Lava-lamp blobs that drift behind your hero — 120fps, no SVG morph.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/morphing-shape-background.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/morphing-shape-background",
+        "cliInstall": "pnpm dlx wensity@latest add morphing-shape-background"
+      }
+    },
+    {
+      "name": "scrubbable-video-reveal",
+      "type": "registry:block",
+      "title": "Scrubbable Video Reveal",
+      "description": "Apple-style scroll-scrubbed image sequence on a canvas.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/scrubbable-video-reveal.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/scrubbable-video-reveal",
+        "cliInstall": "pnpm dlx wensity@latest add scrubbable-video-reveal"
+      }
+    },
+    {
+      "name": "page-transition-viewport",
+      "type": "registry:block",
+      "title": "Page Transition Viewport",
+      "description": "Native-iOS route changes for the Next.js App Router.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/page-transition-viewport.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/page-transition-viewport",
+        "cliInstall": "pnpm dlx wensity@latest add page-transition-viewport"
+      }
+    },
+    {
+      "name": "interactive-beam-connections",
+      "type": "registry:block",
+      "title": "Interactive Beam Connections",
+      "description": "Glowing laser beams that auto-route between any two cards.",
+      "categories": [
+        "Cinematic Interactions",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/interactive-beam-connections.json",
+      "meta": {
+        "componentUrl": "https://wensity.com/components/interactive-beam-connections",
+        "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
+      }
+    }
+  ]
+}

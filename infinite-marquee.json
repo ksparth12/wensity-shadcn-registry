@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "infinite-marquee",
+  "type": "registry:block",
+  "title": "Infinite Marquee",
+  "description": "Children are duplicated exactly once and the strip animates from `translate3d(0,0,0)` to `translate3d(-50%,0,0)` via a CSS keyframe — work stays on the compositor, the JS thread is free. Soft `mask-image` fade at both edges.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/cinematic-interactions/InfiniteMarquee.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/infinite-marquee.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface InfiniteMarqueeProps {\n  /** Items rendered exactly twice (for seamless loop). */\n  items: React.ReactNode[];\n  /** Cycle duration in seconds (lower = faster). */\n  speed?: number;\n  /** Animation direction. */\n  direction?: \"left\" | \"right\";\n  /** Pause the loop when the cursor enters. Off by default — most marketing\n   *  marquees should keep moving so they never feel \"stuck\" mid-page. */\n  pauseOnHover?: boolean;\n  /** Tailwind gap class between items, e.g. \"gap-10\". */\n  gap?: string;\n  /** Apply the soft mask-image fade at both edges. */\n  fade?: boolean;\n  className?: string;\n}\n\n/**\n * InfiniteMarquee\n *\n * Zero-jitter, GPU-only horizontal marquee. We duplicate the children once\n * and animate from `translate3d(0,0,0)` → `translate3d(-50%,0,0)` via a CSS\n * keyframe (defined in `globals.css`), so the work stays on the compositor\n * and never touches the JS thread.\n */\nexport function InfiniteMarquee({\n  items,\n  speed = 30,\n  direction = \"left\",\n  pauseOnHover = false,\n  gap = \"gap-20\",\n  fade = true,\n  className,\n}: InfiniteMarqueeProps) {\n  return (\n    <div\n      className={cn(\n        \"group/marquee relative w-full overflow-hidden\",\n        fade && [\n          \"[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n          \"[-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n        ],\n        className\n      )}\n    >\n      <div\n        className={cn(\n          \"flex w-max items-center will-change-transform\",\n          // Honour the OS reduced-motion preference — freeze the loop.\n          \"motion-reduce:![animation:none]\",\n          gap\n        )}\n        style={{\n          animation: `${\n            direction === \"left\" ? \"wensity-marquee-x\" : \"wensity-marquee-x-reverse\"\n          } ${speed}s linear infinite`,\n          animationPlayState: \"running\",\n        }}\n        onMouseEnter={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"paused\";\n        }}\n        onMouseLeave={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"running\";\n        }}\n      >\n        {/* Original strip */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden={false}>\n          {items.map((node, i) => (\n            <div key={`a-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n        {/* Duplicate — exactly once — for the seamless wrap at -50%. */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden>\n          {items.map((node, i) => (\n            <div key={`b-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/infinite-marquee.tsx. For Pro components and updates, use pnpm dlx wensity@latest add infinite-marquee.",
+  "categories": [
+    "Cinematic Interactions",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "infinite-marquee",
+      "access": "free",
+      "category": "Cinematic Interactions",
+      "componentUrl": "https://wensity.com/components/infinite-marquee",
+      "shadcnUrl": "https://wensity.com/r/infinite-marquee",
+      "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
+    }
+  }
+}

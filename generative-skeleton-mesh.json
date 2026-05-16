@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "generative-skeleton-mesh",
+  "type": "registry:block",
+  "title": "Generative Skeleton Mesh",
+  "description": "Two stacked radial-gradient layers translate against each other on long counter-loops, producing an aurora-like 'thinking' atmosphere. Theme-aware, GPU-only, and reads as 'AI is working' without ever feeling stuck.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/agentic-ai/GenerativeSkeletonMesh.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/generative-skeleton-mesh.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface GenerativeSkeletonMeshProps {\n  /** Number of skeleton lines to render */\n  lines?: number;\n  /** Outer width — pass any tailwind class or inline style */\n  className?: string;\n  /** Height override (px). Defaults to lines * 28 + 96 */\n  height?: number;\n  /** Animation speed multiplier (1 = default). Higher = faster. */\n  speed?: number;\n}\n\n/**\n * GenerativeSkeletonMesh\n *\n * A flowing aurora \"AI is thinking\" loader. Three layers do the work:\n *   1. Two large radial-gradient blobs counter-translating (transform only)\n *   2. A conic-gradient halo slowly rotating behind the lines\n *   3. Skeleton bars with a left→right shimmer band (translateX)\n *\n * Every animation runs on transform/opacity. Theme-aware via CSS vars.\n */\nexport function GenerativeSkeletonMesh({\n  lines = 4,\n  className,\n  height,\n  speed = 1,\n}: GenerativeSkeletonMeshProps) {\n  const computedHeight = height ?? lines * 28 + 96;\n  const dur = 5.5 / speed;\n\n  return (\n    <div\n      role=\"status\"\n      aria-label=\"Generating response\"\n      className={cn(\n        \"relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]\",\n        className\n      )}\n      style={{ height: computedHeight }}\n    >\n      {/* Soft conic halo, slow rotation */}\n      <div\n        aria-hidden\n        className=\"absolute -inset-[30%] opacity-60 dark:opacity-40\"\n        style={{\n          background:\n            \"conic-gradient(from 0deg at 50% 50%, rgba(205,28,24,0.18), rgba(255,168,150,0.12), rgba(205,28,24,0.20), rgba(255,168,150,0.10), rgba(205,28,24,0.18))\",\n          filter: \"blur(40px)\",\n          animation: `wensity-mesh-spin ${dur * 3}s linear infinite`,\n          willChange: \"transform\",\n        }}\n      />\n\n      {/* Mesh blob A — slow drift */}\n      <div\n        aria-hidden\n        className=\"absolute -inset-[30%]\"\n        style={{\n          background:\n            \"radial-gradient(36% 50% at 30% 40%, rgba(205,28,24,0.45), transparent 65%), radial-gradient(40% 50% at 70% 70%, rgba(255,138,110,0.40), transparent 65%)\",\n          filter: \"blur(34px)\",\n          animation: `wensity-mesh-driftA ${dur}s ease-in-out infinite alternate`,\n          willChange: \"transform\",\n        }}\n      />\n\n      {/* Mesh blob B — counter drift */}\n      <div\n        aria-hidden\n        className=\"absolute -inset-[30%]\"\n        style={{\n          background:\n            \"radial-gradient(36% 50% at 75% 30%, rgba(255,180,150,0.40), transparent 65%), radial-gradient(40% 60% at 25% 85%, rgba(205,28,24,0.35), transparent 65%)\",\n          filter: \"blur(40px)\",\n          animation: `wensity-mesh-driftB ${dur * 1.35}s ease-in-out infinite alternate`,\n          willChange: \"transform\",\n        }}\n      />\n\n      {/* Faux content rows with a sweeping highlight band */}\n      <div className=\"relative flex h-full flex-col justify-center gap-3.5 px-6\">\n        {Array.from({ length: lines }).map((_, i) => (\n          <div\n            key={i}\n            className=\"relative h-3 overflow-hidden rounded-full bg-[var(--surface-muted)]\"\n            style={{ width: `${[100, 92, 78, 88, 64, 96][i % 6]}%` }}\n          >\n            <span\n              aria-hidden\n              className=\"absolute inset-y-0 left-0 w-[40%] rounded-full\"\n              style={{\n                background:\n                  \"linear-gradient(90deg, transparent 0%, rgba(205,28,24,0.55) 50%, transparent 100%)\",\n                animation: `wensity-mesh-sweep ${1.6 + i * 0.18}s cubic-bezier(0.4, 0, 0.2, 1) ${i * 0.16}s infinite`,\n                willChange: \"transform\",\n              }}\n            />\n          </div>\n        ))}\n      </div>\n\n      <span className=\"sr-only\">Loading…</span>\n\n      <style>{`\n        @keyframes wensity-mesh-spin {\n          from { transform: rotate(0deg); }\n          to   { transform: rotate(360deg); }\n        }\n        @keyframes wensity-mesh-driftA {\n          0%   { transform: translate3d(-12%, -8%, 0) scale(1); }\n          100% { transform: translate3d(14%, 10%, 0) scale(1.15); }\n        }\n        @keyframes wensity-mesh-driftB {\n          0%   { transform: translate3d(14%, 10%, 0) scale(1.1); }\n          100% { transform: translate3d(-14%, -8%, 0) scale(0.95); }\n        }\n        @keyframes wensity-mesh-sweep {\n          0%   { transform: translate3d(-100%, 0, 0); }\n          100% { transform: translate3d(360%, 0, 0); }\n        }\n      `}</style>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/generative-skeleton-mesh.tsx. For Pro components and updates, use pnpm dlx wensity@latest add generative-skeleton-mesh.",
+  "categories": [
+    "Agentic AI Interfaces",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "generative-skeleton-mesh",
+      "access": "free",
+      "category": "Agentic AI Interfaces",
+      "componentUrl": "https://wensity.com/components/generative-skeleton-mesh",
+      "shadcnUrl": "https://wensity.com/r/generative-skeleton-mesh",
+      "cliInstall": "pnpm dlx wensity@latest add generative-skeleton-mesh"
+    }
+  }
+}

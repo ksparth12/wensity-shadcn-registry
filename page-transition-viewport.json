@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "page-transition-viewport",
+  "type": "registry:block",
+  "title": "Page Transition Viewport",
+  "description": "Wrap `{children}` in your root layout, pass `usePathname()` as `routeKey`, and outgoing routes are held in the DOM long enough to play their exit animation. Ships with a buttery push-pull (scale + blur + slide) and three other variants.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "framer-motion",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/cinematic-interactions/PageTransitionViewport.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/page-transition-viewport.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  motion,\n  AnimatePresence,\n  useReducedMotion,\n  type Transition,\n  type Variants,\n} from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\nexport type PageTransitionVariant =\n  | \"push-pull\"\n  | \"fade\"\n  | \"wipe\"\n  | \"scale\"\n  | \"veil\"\n  | \"iris\";\n\nexport interface PageTransitionViewportProps {\n  children: React.ReactNode;\n  /**\n   * Unique key for the current \"page\". When this changes, the previous\n   * subtree is held in the DOM long enough to play its exit animation.\n   * In Next.js App Router, pass `usePathname()`.\n   */\n  routeKey: string;\n  /** Visual style of the route transition. */\n  variant?: PageTransitionVariant;\n  /** Override the spring that drives every animated property. */\n  transition?: Transition;\n  /** Show a thin chili progress bar at the top during every transition. */\n  showProgressBar?: boolean;\n  className?: string;\n}\n\nconst DEFAULT_TRANSITION: Transition = {\n  type: \"spring\",\n  stiffness: 280,\n  damping: 34,\n  mass: 0.65,\n};\n\nconst VARIANTS: Record<PageTransitionVariant, Variants> = {\n  \"push-pull\": {\n    initial: { opacity: 0, y: 32, scale: 0.985, filter: \"blur(8px)\" },\n    enter: { opacity: 1, y: 0, scale: 1, filter: \"blur(0px)\" },\n    exit: { opacity: 0, y: -16, scale: 0.972, filter: \"blur(6px)\" },\n  },\n  fade: {\n    initial: { opacity: 0 },\n    enter: { opacity: 1 },\n    exit: { opacity: 0 },\n  },\n  wipe: {\n    initial: { clipPath: \"inset(0% 0% 100% 0%)\", opacity: 0 },\n    enter: { clipPath: \"inset(0% 0% 0% 0%)\", opacity: 1 },\n    exit: { clipPath: \"inset(100% 0% 0% 0%)\", opacity: 0 },\n  },\n  scale: {\n    initial: { opacity: 0, scale: 0.94, filter: \"blur(4px)\" },\n    enter: { opacity: 1, scale: 1, filter: \"blur(0px)\" },\n    exit: { opacity: 0, scale: 1.04, filter: \"blur(4px)\" },\n  },\n  // \"Veil\" — incoming page rises behind a thin chili bar that sweeps off-screen.\n  veil: {\n    initial: { opacity: 0, y: 24, filter: \"blur(10px)\" },\n    enter: { opacity: 1, y: 0, filter: \"blur(0px)\" },\n    exit: { opacity: 0, y: -8, filter: \"blur(6px)\" },\n  },\n  // \"Iris\" — circular clip-path opens from the center.\n  iris: {\n    initial: { clipPath: \"circle(0% at 50% 50%)\", opacity: 0.85 },\n    enter: { clipPath: \"circle(140% at 50% 50%)\", opacity: 1 },\n    exit: { clipPath: \"circle(0% at 50% 50%)\", opacity: 0 },\n  },\n};\n\n/**\n * PageTransitionViewport\n *\n * Drop this around your `{children}` in a Next.js App Router layout to make\n * route changes feel like a native iOS app. Pass `usePathname()` as\n * `routeKey` so the outgoing page is held in the DOM long enough to play\n * its exit animation before unmount.\n *\n * Animation contract: only `transform`, `opacity`, `filter`, `clip-path`.\n *\n * Bonus: a thin top progress bar (opt-in via `showProgressBar`) fires every\n * time the route changes, giving users immediate feedback that something\n * is loading — even when the transition itself is sub-200ms.\n */\nexport function PageTransitionViewport({\n  children,\n  routeKey,\n  variant = \"push-pull\",\n  transition = DEFAULT_TRANSITION,\n  showProgressBar = false,\n  className,\n}: PageTransitionViewportProps) {\n  const reduce = useReducedMotion();\n  const variants = reduce\n    ? {\n        initial: { opacity: 1 },\n        enter: { opacity: 1 },\n        exit: { opacity: 1 },\n      }\n    : VARIANTS[variant];\n\n  return (\n    <div className={cn(\"relative isolate w-full\", className)}>\n      {showProgressBar && !reduce && <RouteProgressBar routeKey={routeKey} />}\n\n      {/* Veil sweep — only for the `veil` variant. */}\n      {variant === \"veil\" && !reduce && (\n        <AnimatePresence initial={false}>\n          <motion.span\n            key={`veil-${routeKey}`}\n            aria-hidden\n            className=\"pointer-events-none absolute inset-x-0 top-0 z-40 h-full origin-bottom bg-chili-500\"\n            initial={{ scaleY: 1 }}\n            animate={{ scaleY: 0 }}\n            transition={{ duration: 0.55, ease: [0.83, 0, 0.17, 1] }}\n            style={{ willChange: \"transform\" }}\n          />\n        </AnimatePresence>\n      )}\n\n      <AnimatePresence mode=\"wait\" initial={false}>\n        <motion.div\n          key={routeKey}\n          variants={variants}\n          initial=\"initial\"\n          animate=\"enter\"\n          exit=\"exit\"\n          transition={transition}\n          style={{ willChange: \"transform, opacity, filter\" }}\n          className=\"relative w-full\"\n        >\n          {children}\n        </motion.div>\n      </AnimatePresence>\n    </div>\n  );\n}\n\n/* ─────────────────────────── Top progress bar ───────────────────────── */\n\nfunction RouteProgressBar({ routeKey }: { routeKey: string }) {\n  return (\n    <AnimatePresence initial={false} mode=\"wait\">\n      <motion.div\n        key={`bar-${routeKey}`}\n        aria-hidden\n        className=\"pointer-events-none absolute inset-x-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-chili-500 via-chili-400 to-chili-500\"\n        initial={{ scaleX: 0, opacity: 1 }}\n        animate={{ scaleX: 1, opacity: 1 }}\n        exit={{ opacity: 0 }}\n        transition={{\n          scaleX: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },\n          opacity: { duration: 0.25, delay: 0.4 },\n        }}\n        style={{ willChange: \"transform, opacity\" }}\n      />\n    </AnimatePresence>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/page-transition-viewport.tsx. For Pro components and updates, use pnpm dlx wensity@latest add page-transition-viewport.",
+  "categories": [
+    "Cinematic Interactions",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "page-transition-viewport",
+      "access": "free",
+      "category": "Cinematic Interactions",
+      "componentUrl": "https://wensity.com/components/page-transition-viewport",
+      "shadcnUrl": "https://wensity.com/r/page-transition-viewport",
+      "cliInstall": "pnpm dlx wensity@latest add page-transition-viewport"
+    }
+  }
+}

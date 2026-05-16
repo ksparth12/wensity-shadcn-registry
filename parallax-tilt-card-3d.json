@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "parallax-tilt-card-3d",
+  "type": "registry:block",
+  "title": "3D Parallax Tilt Card",
+  "description": "Cursor offset is normalised against the card's own bounding box, then springified (stiffness 150 / damping 20) so the card breathes between states. A `radial-gradient` glare layer sweeps inversely to the tilt for true Apple-grade lighting.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "framer-motion",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/cinematic-interactions/ParallaxTiltCard3D.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/parallax-tilt-card-3d.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  motion,\n  useMotionValue,\n  useSpring,\n  useTransform,\n  useMotionTemplate,\n  useReducedMotion,\n} from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface ParallaxTiltCard3DProps {\n  children: React.ReactNode;\n  /** Maximum tilt in degrees on each axis. */\n  max?: number;\n  /** CSS perspective (px). Higher = subtler. */\n  perspective?: number;\n  /** Toggle the moving glass glare overlay. */\n  glare?: boolean;\n  /** Glare intensity 0..1. */\n  glareOpacity?: number;\n  /** Spring stiffness — lower = more \"breathing\". */\n  stiffness?: number;\n  /** Spring damping. */\n  damping?: number;\n  className?: string;\n}\n\n/**\n * ParallaxTiltCard3D\n *\n * Cursor-tracked tilt with a Framer Motion spring on the rotation, plus a\n * glass glare layer that sweeps inversely to the tilt. Math is rooted at\n * the card's own bounding box (not the viewport), so the effect feels\n * locally anchored.\n *\n * GPU contract: only `transform` + `opacity` animate.\n */\nexport function ParallaxTiltCard3D({\n  children,\n  max = 14,\n  perspective = 1100,\n  glare = true,\n  glareOpacity = 0.55,\n  stiffness = 150,\n  damping = 20,\n  className,\n}: ParallaxTiltCard3DProps) {\n  const ref = React.useRef<HTMLDivElement>(null);\n  const reduceMotion = useReducedMotion() ?? false;\n\n  // Raw -1..1 normalized cursor position, springified for \"breath\".\n  const px = useMotionValue(0);\n  const py = useMotionValue(0);\n  const sx = useSpring(px, { stiffness, damping, mass: 0.5 });\n  const sy = useSpring(py, { stiffness, damping, mass: 0.5 });\n\n  // Rotations.\n  const rotateY = useTransform(sx, [-1, 1], [-max, max]);\n  const rotateX = useTransform(sy, [-1, 1], [max, -max]);\n\n  // Glare position — sweeps OPPOSITE to the tilt, like real reflected light.\n  const glareX = useTransform(sx, [-1, 1], [85, 15]);\n  const glareY = useTransform(sy, [-1, 1], [85, 15]);\n  const glareO = useTransform(\n    [sx, sy] as const,\n    ([x, y]) => Math.min(1, Math.hypot(x as number, y as number)) * glareOpacity\n  );\n  const glareBg = useMotionTemplate`radial-gradient(600px circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.85), rgba(255,255,255,0) 45%)`;\n\n  function handleMove(e: React.PointerEvent<HTMLDivElement>) {\n    if (reduceMotion) return;\n    // Tilt only responds to a real mouse. Touch \"taps\" should not jolt the card.\n    if (e.pointerType !== \"mouse\") return;\n    const r = ref.current?.getBoundingClientRect();\n    if (!r) return;\n    const nx = ((e.clientX - r.left) / r.width) * 2 - 1;\n    const ny = ((e.clientY - r.top) / r.height) * 2 - 1;\n    px.set(Math.max(-1, Math.min(1, nx)));\n    py.set(Math.max(-1, Math.min(1, ny)));\n  }\n\n  function handleLeave() {\n    px.set(0);\n    py.set(0);\n  }\n\n  return (\n    <div\n      ref={ref}\n      onPointerMove={handleMove}\n      onPointerLeave={handleLeave}\n      className={cn(\"relative\", className)}\n      style={{ perspective: `${perspective}px` }}\n    >\n      <motion.div\n        style={{\n          rotateX: reduceMotion ? 0 : rotateX,\n          rotateY: reduceMotion ? 0 : rotateY,\n          transformStyle: \"preserve-3d\",\n          willChange: reduceMotion ? \"auto\" : \"transform\",\n        }}\n        className=\"relative h-full w-full rounded-[inherit]\"\n      >\n        {/* Card surface */}\n        <div className=\"relative h-full w-full overflow-hidden rounded-[inherit]\">\n          {children}\n\n          {glare && !reduceMotion && (\n            <motion.div\n              aria-hidden\n              className=\"pointer-events-none absolute inset-0\"\n              style={{ background: glareBg, opacity: glareO, mixBlendMode: \"soft-light\" }}\n            />\n          )}\n        </div>\n      </motion.div>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/parallax-tilt-card-3d.tsx. For Pro components and updates, use pnpm dlx wensity@latest add parallax-tilt-card-3d.",
+  "categories": [
+    "Cinematic Interactions",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "parallax-tilt-card-3d",
+      "access": "free",
+      "category": "Cinematic Interactions",
+      "componentUrl": "https://wensity.com/components/parallax-tilt-card-3d",
+      "shadcnUrl": "https://wensity.com/r/parallax-tilt-card-3d",
+      "cliInstall": "pnpm dlx wensity@latest add parallax-tilt-card-3d"
+    }
+  }
+}

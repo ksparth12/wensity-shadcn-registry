@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scrubbable-video-reveal",
+  "type": "registry:block",
+  "title": "Scrubbable Video Reveal",
+  "description": "Never uses a `<video>` tag — inter-frame compression breaks reverse scrubbing. Instead we preload an array of WebP/JPEG frames and map `scrollYProgress → drawImage()` on a DPR-aware canvas. Reverse-scrubs perfectly, runs on the GPU.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "framer-motion",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/cinematic-interactions/ScrubbableVideoReveal.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/scrubbable-video-reveal.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion, useScroll, useTransform, useMotionValueEvent } from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface ScrubbableVideoRevealProps {\n  /** Image sequence URLs in order. Use 100–200 highly-compressed WebP / JPEG. */\n  frames: string[];\n  /** Aspect ratio for the canvas wrapper (e.g. \"16 / 10\"). */\n  aspect?: string;\n  /** Multiplier on the scroll travel — total inner = `travel × 100vh`. */\n  travel?: number;\n  /** Render the surrounding device frame. */\n  framed?: boolean;\n  /** Pin the canvas via `position: sticky` while user scrolls. */\n  sticky?: boolean;\n  /** Optional content rendered above the canvas (overlays). */\n  children?: React.ReactNode;\n  /** Use the window scroll instead of an inner scrollable container. */\n  useWindow?: boolean;\n  /** Loading strategy for the image preload. */\n  preload?: \"eager\" | \"lazy\";\n  /** Scroll container height (when `useWindow` is false). */\n  height?: string;\n  className?: string;\n}\n\n/**\n * ScrubbableVideoReveal\n *\n * Apple-grade scroll-scrubbed sequence. We never use a `<video>` tag —\n * inter-frame compression murders reverse-scrubbing. Instead we preload\n * every frame as an `Image`, map `scrollYProgress → frameIndex`, and call\n * `ctx.drawImage()` on every change. The canvas paints on the GPU.\n *\n * Notes:\n *  - Provide 100–200 frames. WebP keeps size sane.\n *  - We resize the canvas with `devicePixelRatio` so it stays sharp on retina.\n *  - We round to the nearest integer index so we don't redraw the same frame.\n */\nexport function ScrubbableVideoReveal({\n  frames,\n  aspect = \"16 / 10\",\n  travel = 3,\n  framed = true,\n  sticky = true,\n  useWindow = false,\n  children,\n  preload = \"eager\",\n  height = \"640px\",\n  className,\n}: ScrubbableVideoRevealProps) {\n  const containerRef = React.useRef<HTMLDivElement>(null);\n  const targetRef = React.useRef<HTMLDivElement>(null);\n  const canvasRef = React.useRef<HTMLCanvasElement>(null);\n  const imagesRef = React.useRef<HTMLImageElement[]>([]);\n  const lastIndexRef = React.useRef<number>(-1);\n  const [loaded, setLoaded] = React.useState(0);\n\n  /* ─── Preload frames ─── */\n  React.useEffect(() => {\n    let cancelled = false;\n    const arr: HTMLImageElement[] = [];\n    let count = 0;\n    frames.forEach((src, i) => {\n      const img = new Image();\n      img.decoding = \"async\";\n      img.loading = preload === \"lazy\" ? \"lazy\" : \"eager\";\n      img.src = src;\n      img.onload = () => {\n        if (cancelled) return;\n        count++;\n        setLoaded(count);\n        if (i === 0) drawFrame(0);\n      };\n      arr[i] = img;\n    });\n    imagesRef.current = arr;\n    return () => {\n      cancelled = true;\n      imagesRef.current = [];\n    };\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [frames.join(\"|\")]);\n\n  /* ─── Resize canvas to its CSS box (DPR-aware) ─── */\n  const sizeCanvas = React.useCallback(() => {\n    const c = canvasRef.current;\n    if (!c) return;\n    const dpr = Math.min(window.devicePixelRatio || 1, 2);\n    const rect = c.getBoundingClientRect();\n    const w = Math.floor(rect.width * dpr);\n    const h = Math.floor(rect.height * dpr);\n    if (c.width !== w || c.height !== h) {\n      c.width = w;\n      c.height = h;\n      drawFrame(lastIndexRef.current >= 0 ? lastIndexRef.current : 0);\n    }\n  }, []);\n\n  React.useEffect(() => {\n    sizeCanvas();\n    const onResize = () => sizeCanvas();\n    window.addEventListener(\"resize\", onResize);\n    return () => window.removeEventListener(\"resize\", onResize);\n  }, [sizeCanvas]);\n\n  /* ─── Frame painter ─── */\n  function drawFrame(index: number) {\n    const c = canvasRef.current;\n    const img = imagesRef.current[index];\n    if (!c || !img || !img.complete || img.naturalWidth === 0) return;\n    const ctx = c.getContext(\"2d\");\n    if (!ctx) return;\n    // Object-fit: cover behaviour.\n    const cw = c.width;\n    const ch = c.height;\n    const iw = img.naturalWidth;\n    const ih = img.naturalHeight;\n    const cr = cw / ch;\n    const ir = iw / ih;\n    let dw = cw;\n    let dh = ch;\n    let dx = 0;\n    let dy = 0;\n    if (ir > cr) {\n      // image wider than canvas → scale to height, crop width\n      dh = ch;\n      dw = ch * ir;\n      dx = (cw - dw) / 2;\n    } else {\n      dw = cw;\n      dh = cw / ir;\n      dy = (ch - dh) / 2;\n    }\n    ctx.clearRect(0, 0, cw, ch);\n    ctx.drawImage(img, dx, dy, dw, dh);\n    lastIndexRef.current = index;\n  }\n\n  /* ─── Scroll → frame index ─── */\n  const { scrollYProgress } = useScroll(\n    useWindow\n      ? { target: targetRef, offset: [\"start end\", \"end start\"] }\n      : {\n          container: containerRef,\n          target: targetRef,\n          offset: [\"start start\", \"end end\"],\n        }\n  );\n\n  const frameIndex = useTransform(scrollYProgress, (p) => {\n    const total = frames.length - 1;\n    return Math.round(Math.max(0, Math.min(1, p)) * total);\n  });\n\n  useMotionValueEvent(frameIndex, \"change\", (v) => {\n    if (v !== lastIndexRef.current) drawFrame(v);\n  });\n\n  /* ─── Markup ─── */\n  const innerHeight = `calc(${travel} * 100vh)`;\n\n  return (\n    <div\n      ref={containerRef}\n      className={cn(\n        \"relative w-full\",\n        useWindow\n          ? \"\"\n          : \"scrollbar-hidden overflow-y-auto rounded-3xl border border-[var(--border)] bg-[var(--surface)]\",\n        className\n      )}\n      style={useWindow ? undefined : { height }}\n    >\n      <div ref={targetRef} className=\"relative w-full\" style={{ height: innerHeight }}>\n        <div\n          className={cn(\n            \"flex w-full items-center justify-center px-4 py-6 sm:px-8\",\n            sticky ? \"sticky top-0\" : \"relative\"\n          )}\n          style={!useWindow ? { height } : { height: \"100vh\" }}\n        >\n          <div\n            className={cn(\n              \"relative w-full max-w-4xl overflow-hidden rounded-2xl\",\n              framed\n                ? \"border border-[var(--border-strong)] bg-[#0a0a0b] p-2 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]\"\n                : \"\"\n            )}\n            style={{ aspectRatio: aspect }}\n          >\n            <div className=\"relative h-full w-full overflow-hidden rounded-[14px] bg-black\">\n              <canvas\n                ref={canvasRef}\n                className=\"block h-full w-full\"\n                aria-label=\"Scrubbable video sequence\"\n              />\n              {/* Scanline shimmer while frames preload */}\n              {loaded < frames.length && (\n                <div className=\"pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/60 to-transparent px-3 py-2\">\n                  <div className=\"relative h-[3px] flex-1 overflow-hidden rounded-full bg-white/10\">\n                    <motion.div\n                      className=\"absolute left-0 top-0 h-full w-full origin-left bg-chili-500\"\n                      initial={{ scaleX: 0 }}\n                      animate={{ scaleX: loaded / Math.max(1, frames.length) }}\n                      transition={{ type: \"spring\", stiffness: 220, damping: 28 }}\n                      style={{ willChange: \"transform\" }}\n                    />\n                  </div>\n                  <span className=\"font-display text-[10px] tabular-nums text-white/60\">\n                    {loaded}/{frames.length}\n                  </span>\n                </div>\n              )}\n              {children && <div className=\"absolute inset-0\">{children}</div>}\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/scrubbable-video-reveal.tsx. For Pro components and updates, use pnpm dlx wensity@latest add scrubbable-video-reveal.",
+  "categories": [
+    "Cinematic Interactions",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "scrubbable-video-reveal",
+      "access": "free",
+      "category": "Cinematic Interactions",
+      "componentUrl": "https://wensity.com/components/scrubbable-video-reveal",
+      "shadcnUrl": "https://wensity.com/r/scrubbable-video-reveal",
+      "cliInstall": "pnpm dlx wensity@latest add scrubbable-video-reveal"
+    }
+  }
+}
