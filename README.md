@@ -6,23 +6,13 @@ The private Wensity product repository is not mirrored here. This repo contains 
 
 ## Usage
 
-Until the `@wensity` namespace is accepted into shadcn's public registry index, add this registry to `components.json`:
-
-```json
-{
-  "registries": {
-    "@wensity": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/{name}.json"
-  }
-}
-```
-
-Then install a free component:
+Install a free component with shadcn:
 
 ```bash
 npx shadcn@latest add @wensity/liquid-multimodal-input
 ```
 
-After shadcn accepts the public registry index PR, the same command works without manual `components.json` configuration.
+The `@wensity` namespace is registered in shadcn's public registry index and resolves to these free-only JSON artifacts.
 
 ## Components
 
@@ -31,14 +21,12 @@ After shadcn accepts the public registry index PR, the same command works withou
 - `generative-skeleton-mesh` - Generative Skeleton Mesh
 - `voice-aurora-wave` - Voice Aurora Wave
 - `model-context-switcher` - Model Context Switcher
-- `magnetic-prompt-suggestions` - Magnetic Prompt Suggestions
 - `dynamic-island-toast` - Dynamic Island Toast
 - `parallax-tilt-card-3d` - 3D Parallax Tilt Card
 - `infinite-marquee` - Infinite Marquee
 - `apple-sticky-scroll-sequence` - Apple-Style Sticky Scroll
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
-- `page-transition-viewport` - Page Transition Viewport
 - `interactive-beam-connections` - Interactive Beam Connections
 
 ## Source

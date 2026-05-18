@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "wensity",
   "homepage": "https://wensity.com",
-  "count": 14,
+  "count": 12,
   "items": [
     {
       "name": "liquid-multimodal-input",
@@ -100,26 +100,6 @@
       "meta": {
         "componentUrl": "https://wensity.com/components/model-context-switcher",
         "cliInstall": "pnpm dlx wensity@latest add model-context-switcher"
-      }
-    },
-    {
-      "name": "magnetic-prompt-suggestions",
-      "type": "registry:block",
-      "title": "Magnetic Prompt Suggestions",
-      "description": "Cards that elastically pull toward your cursor before you click.",
-      "categories": [
-        "Agentic AI Interfaces",
-        "wensity",
-        "free"
-      ],
-      "dependencies": [
-        "framer-motion",
-        "@tabler/icons-react"
-      ],
-      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/magnetic-prompt-suggestions.json",
-      "meta": {
-        "componentUrl": "https://wensity.com/components/magnetic-prompt-suggestions",
-        "cliInstall": "pnpm dlx wensity@latest add magnetic-prompt-suggestions"
       }
     },
     {
@@ -231,25 +211,6 @@
       "meta": {
         "componentUrl": "https://wensity.com/components/scrubbable-video-reveal",
         "cliInstall": "pnpm dlx wensity@latest add scrubbable-video-reveal"
-      }
-    },
-    {
-      "name": "page-transition-viewport",
-      "type": "registry:block",
-      "title": "Page Transition Viewport",
-      "description": "Native-iOS route changes for the Next.js App Router.",
-      "categories": [
-        "Cinematic Interactions",
-        "wensity",
-        "free"
-      ],
-      "dependencies": [
-        "framer-motion"
-      ],
-      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/page-transition-viewport.json",
-      "meta": {
-        "componentUrl": "https://wensity.com/components/page-transition-viewport",
-        "cliInstall": "pnpm dlx wensity@latest add page-transition-viewport"
       }
     },
     {

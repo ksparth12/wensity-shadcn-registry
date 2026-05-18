@@ -3,7 +3,7 @@
   "name": "scrubbable-video-reveal",
   "type": "registry:block",
   "title": "Scrubbable Video Reveal",
-  "description": "Never uses a `<video>` tag — inter-frame compression breaks reverse scrubbing. Instead we preload an array of WebP/JPEG frames and map `scrollYProgress → drawImage()` on a DPR-aware canvas. Reverse-scrubs perfectly, runs on the GPU.",
+  "description": "Scroll forward, scroll back — every frame follows your hand like a product video on apple.com.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",

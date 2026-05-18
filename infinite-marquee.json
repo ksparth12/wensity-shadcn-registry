@@ -3,7 +3,7 @@
   "name": "infinite-marquee",
   "type": "registry:block",
   "title": "Infinite Marquee",
-  "description": "Children are duplicated exactly once and the strip animates from `translate3d(0,0,0)` to `translate3d(-50%,0,0)` via a CSS keyframe — work stays on the compositor, the JS thread is free. Soft `mask-image` fade at both edges.",
+  "description": "Your logos scroll forever — silky, seamless, fading softly at both edges.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",

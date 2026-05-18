@@ -3,7 +3,7 @@
   "name": "parallax-tilt-card-3d",
   "type": "registry:block",
   "title": "3D Parallax Tilt Card",
-  "description": "Cursor offset is normalised against the card's own bounding box, then springified (stiffness 150 / damping 20) so the card breathes between states. A `radial-gradient` glare layer sweeps inversely to the tilt for true Apple-grade lighting.",
+  "description": "Move your cursor and the card leans into it — glare sweeps across like light on real glass.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",
