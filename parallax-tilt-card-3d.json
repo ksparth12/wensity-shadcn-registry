@@ -3,7 +3,7 @@
   "name": "parallax-tilt-card-3d",
   "type": "registry:block",
   "title": "3D Parallax Tilt Card",
-  "description": "Move your cursor and the card leans into it — glare sweeps across like light on real glass.",
+  "description": "Move your cursor and the card leans into it. Glare sweeps across like light on real glass.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",
@@ -26,7 +26,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
@@ -134,8 +134,8 @@
       "slug": "parallax-tilt-card-3d",
       "access": "free",
       "category": "Cinematic Interactions",
-      "componentUrl": "https://wensity.com/components/parallax-tilt-card-3d",
-      "shadcnUrl": "https://wensity.com/r/parallax-tilt-card-3d",
+      "componentUrl": "https://ui.wensity.com/components/parallax-tilt-card-3d",
+      "shadcnUrl": "https://ui.wensity.com/r/parallax-tilt-card-3d",
       "cliInstall": "pnpm dlx wensity@latest add parallax-tilt-card-3d"
     }
   }

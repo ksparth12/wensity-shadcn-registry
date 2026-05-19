@@ -3,7 +3,7 @@
   "name": "stream-reveal-typography",
   "type": "registry:block",
   "title": "Stream Reveal Typography",
-  "description": "Words drift in one by one — smooth, weightless, like a thought forming in real time.",
+  "description": "Words drift in one by one. Smooth, weightless, like a thought forming in real time.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "@tabler/icons-react",
@@ -27,7 +27,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
@@ -135,8 +135,8 @@
       "slug": "stream-reveal-typography",
       "access": "free",
       "category": "Agentic AI Interfaces",
-      "componentUrl": "https://wensity.com/components/stream-reveal-typography",
-      "shadcnUrl": "https://wensity.com/r/stream-reveal-typography",
+      "componentUrl": "https://ui.wensity.com/components/stream-reveal-typography",
+      "shadcnUrl": "https://ui.wensity.com/r/stream-reveal-typography",
       "cliInstall": "pnpm dlx wensity@latest add stream-reveal-typography"
     }
   }

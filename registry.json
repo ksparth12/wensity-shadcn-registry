@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "wensity",
-  "homepage": "https://wensity.com",
+  "homepage": "https://ui.wensity.com",
   "count": 12,
   "items": [
     {
@@ -20,7 +20,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/liquid-multimodal-input.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/liquid-multimodal-input",
+        "componentUrl": "https://ui.wensity.com/components/liquid-multimodal-input",
         "cliInstall": "pnpm dlx wensity@latest add liquid-multimodal-input"
       }
     },
@@ -40,7 +40,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/stream-reveal-typography.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/stream-reveal-typography",
+        "componentUrl": "https://ui.wensity.com/components/stream-reveal-typography",
         "cliInstall": "pnpm dlx wensity@latest add stream-reveal-typography"
       }
     },
@@ -48,7 +48,7 @@
       "name": "generative-skeleton-mesh",
       "type": "registry:block",
       "title": "Generative Skeleton Mesh",
-      "description": "An organic loading state — not a spinner.",
+      "description": "An organic loading state, not a spinner.",
       "categories": [
         "Agentic AI Interfaces",
         "wensity",
@@ -57,7 +57,7 @@
       "dependencies": [],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/generative-skeleton-mesh.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/generative-skeleton-mesh",
+        "componentUrl": "https://ui.wensity.com/components/generative-skeleton-mesh",
         "cliInstall": "pnpm dlx wensity@latest add generative-skeleton-mesh"
       }
     },
@@ -65,7 +65,7 @@
       "name": "voice-aurora-wave",
       "type": "registry:block",
       "title": "Voice Aurora Wave",
-      "description": "A breathing voice orb — never jittery, always organic.",
+      "description": "A breathing voice orb. Never jittery, always organic.",
       "categories": [
         "Agentic AI Interfaces",
         "wensity",
@@ -77,7 +77,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/voice-aurora-wave.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/voice-aurora-wave",
+        "componentUrl": "https://ui.wensity.com/components/voice-aurora-wave",
         "cliInstall": "pnpm dlx wensity@latest add voice-aurora-wave"
       }
     },
@@ -98,7 +98,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/model-context-switcher.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/model-context-switcher",
+        "componentUrl": "https://ui.wensity.com/components/model-context-switcher",
         "cliInstall": "pnpm dlx wensity@latest add model-context-switcher"
       }
     },
@@ -106,7 +106,7 @@
       "name": "dynamic-island-toast",
       "type": "registry:block",
       "title": "Dynamic Island Toast",
-      "description": "A pixel-faithful Apple Dynamic Island — morphs, splits, and hosts live activities.",
+      "description": "A pixel-faithful Apple Dynamic Island that morphs, splits, and hosts live activities.",
       "categories": [
         "Cinematic Interactions",
         "wensity",
@@ -118,7 +118,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/dynamic-island-toast.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/dynamic-island-toast",
+        "componentUrl": "https://ui.wensity.com/components/dynamic-island-toast",
         "cliInstall": "pnpm dlx wensity@latest add dynamic-island-toast"
       }
     },
@@ -126,7 +126,7 @@
       "name": "parallax-tilt-card-3d",
       "type": "registry:block",
       "title": "3D Parallax Tilt Card",
-      "description": "A card that tilts to the cursor — with real reflected glare.",
+      "description": "A card that tilts to the cursor, with real reflected glare.",
       "categories": [
         "Cinematic Interactions",
         "wensity",
@@ -137,7 +137,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/parallax-tilt-card-3d.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/parallax-tilt-card-3d",
+        "componentUrl": "https://ui.wensity.com/components/parallax-tilt-card-3d",
         "cliInstall": "pnpm dlx wensity@latest add parallax-tilt-card-3d"
       }
     },
@@ -145,7 +145,7 @@
       "name": "infinite-marquee",
       "type": "registry:block",
       "title": "Infinite Marquee",
-      "description": "Seamless, GPU-only logo strip — never stutters.",
+      "description": "Seamless, GPU-only logo strip that never stutters.",
       "categories": [
         "Cinematic Interactions",
         "wensity",
@@ -154,7 +154,7 @@
       "dependencies": [],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/infinite-marquee.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/infinite-marquee",
+        "componentUrl": "https://ui.wensity.com/components/infinite-marquee",
         "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
       }
     },
@@ -173,7 +173,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/apple-sticky-scroll-sequence.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/apple-sticky-scroll-sequence",
+        "componentUrl": "https://ui.wensity.com/components/apple-sticky-scroll-sequence",
         "cliInstall": "pnpm dlx wensity@latest add apple-sticky-scroll-sequence"
       }
     },
@@ -181,7 +181,7 @@
       "name": "morphing-shape-background",
       "type": "registry:block",
       "title": "Morphing Shape Background",
-      "description": "Lava-lamp blobs that drift behind your hero — 120fps, no SVG morph.",
+      "description": "Lava-lamp blobs that drift behind your hero at 120fps with no SVG morph.",
       "categories": [
         "Cinematic Interactions",
         "wensity",
@@ -190,7 +190,7 @@
       "dependencies": [],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/morphing-shape-background.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/morphing-shape-background",
+        "componentUrl": "https://ui.wensity.com/components/morphing-shape-background",
         "cliInstall": "pnpm dlx wensity@latest add morphing-shape-background"
       }
     },
@@ -209,7 +209,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/scrubbable-video-reveal.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/scrubbable-video-reveal",
+        "componentUrl": "https://ui.wensity.com/components/scrubbable-video-reveal",
         "cliInstall": "pnpm dlx wensity@latest add scrubbable-video-reveal"
       }
     },
@@ -228,7 +228,7 @@
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/interactive-beam-connections.json",
       "meta": {
-        "componentUrl": "https://wensity.com/components/interactive-beam-connections",
+        "componentUrl": "https://ui.wensity.com/components/interactive-beam-connections",
         "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
       }
     }

@@ -33,8 +33,8 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 
 Generated from Wensity's public shadcn endpoints:
 
-- Registry index: https://wensity.com/r/registry.json
-- Component payloads: https://wensity.com/r/<component>.json
+- Registry index: https://ui.wensity.com/r/registry.json
+- Component payloads: https://ui.wensity.com/r/<component>.json
 
 ## License
 

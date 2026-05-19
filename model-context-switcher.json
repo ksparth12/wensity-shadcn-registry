@@ -3,7 +3,7 @@
   "name": "model-context-switcher",
   "type": "registry:block",
   "title": "Model Context Switcher",
-  "description": "Pick a model and the selection pill glides to meet your choice — instant, tactile, satisfying.",
+  "description": "Pick a model and the selection pill glides to meet your choice. Instant, tactile, satisfying.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "@radix-ui/react-dropdown-menu",
@@ -28,7 +28,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
@@ -136,8 +136,8 @@
       "slug": "model-context-switcher",
       "access": "free",
       "category": "Agentic AI Interfaces",
-      "componentUrl": "https://wensity.com/components/model-context-switcher",
-      "shadcnUrl": "https://wensity.com/r/model-context-switcher",
+      "componentUrl": "https://ui.wensity.com/components/model-context-switcher",
+      "shadcnUrl": "https://ui.wensity.com/r/model-context-switcher",
       "cliInstall": "pnpm dlx wensity@latest add model-context-switcher"
     }
   }

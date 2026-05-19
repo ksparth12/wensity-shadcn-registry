@@ -3,7 +3,7 @@
   "name": "infinite-marquee",
   "type": "registry:block",
   "title": "Infinite Marquee",
-  "description": "Your logos scroll forever — silky, seamless, fading softly at both edges.",
+  "description": "Your logos scroll forever. Silky, seamless, fading softly at both edges.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",
@@ -25,7 +25,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
@@ -133,8 +133,8 @@
       "slug": "infinite-marquee",
       "access": "free",
       "category": "Cinematic Interactions",
-      "componentUrl": "https://wensity.com/components/infinite-marquee",
-      "shadcnUrl": "https://wensity.com/r/infinite-marquee",
+      "componentUrl": "https://ui.wensity.com/components/infinite-marquee",
+      "shadcnUrl": "https://ui.wensity.com/r/infinite-marquee",
       "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
     }
   }

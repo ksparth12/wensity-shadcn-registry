@@ -3,7 +3,7 @@
   "name": "interactive-beam-connections",
   "type": "registry:block",
   "title": "Interactive Beam Connections",
-  "description": "Glowing pulses race between your cards — showing connection, flow, and architecture at a glance.",
+  "description": "Glowing pulses race between your cards, showing connection, flow, and architecture at a glance.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
     "clsx",
@@ -26,7 +26,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-cabinet, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif)",
+      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",
@@ -134,8 +134,8 @@
       "slug": "interactive-beam-connections",
       "access": "free",
       "category": "Cinematic Interactions",
-      "componentUrl": "https://wensity.com/components/interactive-beam-connections",
-      "shadcnUrl": "https://wensity.com/r/interactive-beam-connections",
+      "componentUrl": "https://ui.wensity.com/components/interactive-beam-connections",
+      "shadcnUrl": "https://ui.wensity.com/r/interactive-beam-connections",
       "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
     }
   }
