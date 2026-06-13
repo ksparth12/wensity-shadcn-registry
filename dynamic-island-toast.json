@@ -6,7 +6,6 @@
   "description": "The pill morphs, splits, and breathes. Every live activity feels like it belongs on a real iPhone.",
   "author": "Wensity <hello@wensity.com>",
   "dependencies": [
-    "@tabler/icons-react",
     "clsx",
     "framer-motion",
     "tailwind-merge"
@@ -27,7 +26,7 @@
   ],
   "cssVars": {
     "theme": {
-      "font-sans": "var(--font-inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
       "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
       "color-background": "var(--background)",
       "color-foreground": "var(--foreground)",

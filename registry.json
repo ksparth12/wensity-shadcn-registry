@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "wensity",
   "homepage": "https://ui.wensity.com",
-  "count": 12,
+  "count": 13,
   "items": [
     {
       "name": "liquid-multimodal-input",
@@ -113,8 +113,7 @@
         "free"
       ],
       "dependencies": [
-        "framer-motion",
-        "@tabler/icons-react"
+        "framer-motion"
       ],
       "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/dynamic-island-toast.json",
       "meta": {
@@ -230,6 +229,25 @@
       "meta": {
         "componentUrl": "https://ui.wensity.com/components/interactive-beam-connections",
         "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
+      }
+    },
+    {
+      "name": "bento-grid",
+      "type": "registry:block",
+      "title": "Bento Grid",
+      "description": "Responsive bento-style grid layout.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/bento-grid.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/bento-grid",
+        "cliInstall": "pnpm dlx wensity@latest add bento-grid"
       }
     }
   ]
