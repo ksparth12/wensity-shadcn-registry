@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "type": "registry:block",
+  "title": "Input",
+  "description": "A polished form input primitive for app interfaces. It handles labels, helper text, error messaging, icon slots, clearable values, disabled and read-only states, and small/default/large sizing from one installable component.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/ui-primitives/Input.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/input.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { IconX } from \"@tabler/icons-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type InputSize = \"sm\" | \"md\" | \"lg\";\n\nexport interface InputProps\n  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, \"size\"> {\n  label?: React.ReactNode;\n  hint?: React.ReactNode;\n  error?: React.ReactNode;\n  leftIcon?: React.ReactNode;\n  rightIcon?: React.ReactNode;\n  clearable?: boolean;\n  onClear?: () => void;\n  inputSize?: InputSize;\n  fullWidth?: boolean;\n  containerClassName?: string;\n  inputClassName?: string;\n}\n\nconst fieldSizes: Record<InputSize, string> = {\n  sm: \"min-h-8 rounded-md\",\n  md: \"min-h-10 rounded-lg\",\n  lg: \"min-h-11 rounded-lg\",\n};\n\nconst inputSizes: Record<InputSize, string> = {\n  sm: \"h-8 px-3 text-xs\",\n  md: \"h-10 px-3.5 text-sm\",\n  lg: \"h-11 px-4 text-[15px]\",\n};\n\nconst iconPad: Record<InputSize, string> = {\n  sm: \"pl-2.5\",\n  md: \"pl-3\",\n  lg: \"pl-3.5\",\n};\n\nconst trailingPad: Record<InputSize, string> = {\n  sm: \"pr-2\",\n  md: \"pr-2.5\",\n  lg: \"pr-3\",\n};\n\nconst fieldBase = cn(\n  \"group/input relative flex w-full items-center overflow-hidden\",\n  \"border border-[var(--border)] bg-[var(--background)]\",\n  \"transition-[border-color] duration-150 ease-out\",\n);\n\nconst fieldInteractive = cn(\n  \"hover:border-[color-mix(in_srgb,var(--foreground)_14%,transparent)]\",\n  \"focus-within:border-[color-mix(in_srgb,var(--foreground)_24%,transparent)]\",\n);\n\nconst fieldError = cn(\n  \"border-red-500/45\",\n  \"hover:border-red-500/55\",\n  \"focus-within:border-red-500/65\",\n);\n\nconst fieldDisabled = cn(\n  \"cursor-not-allowed opacity-45\",\n  \"hover:border-[var(--border)]\",\n);\n\nconst fieldReadOnly = cn(\n  \"border-[var(--border)] bg-[color-mix(in_srgb,var(--foreground)_2.5%,var(--background))]\",\n  \"hover:border-[var(--border)]\",\n);\n\nconst iconSlot = cn(\n  \"inline-flex shrink-0 items-center justify-center text-[var(--muted-foreground)]/55\",\n  \"transition-colors duration-150 ease-out\",\n  \"group-focus-within/input:text-[var(--muted-foreground)]\",\n  \"[&_svg]:size-[15px] [&_svg]:shrink-0\",\n);\n\nconst INPUT_AUTOFILL_STYLE_ID = \"wensity-input-autofill\";\n\nfunction ensureInputAutofillStyles() {\n  if (typeof document === \"undefined\") return;\n  if (document.getElementById(INPUT_AUTOFILL_STYLE_ID)) return;\n\n  const style = document.createElement(\"style\");\n  style.id = INPUT_AUTOFILL_STYLE_ID;\n  style.textContent = `\n    [data-wensity-input] .wensity-input-control:-webkit-autofill,\n    [data-wensity-input] .wensity-input-control:-webkit-autofill:hover,\n    [data-wensity-input] .wensity-input-control:-webkit-autofill:focus,\n    [data-wensity-input] .wensity-input-control:-webkit-autofill:active,\n    [data-wensity-input] .wensity-input-control:autofill {\n      -webkit-box-shadow: 0 0 0 1000px var(--background) inset !important;\n      box-shadow: 0 0 0 1000px var(--background) inset !important;\n      -webkit-text-fill-color: var(--foreground) !important;\n      color: var(--foreground) !important;\n      caret-color: var(--foreground);\n      transition: background-color 99999s ease-out 0s;\n    }\n\n    [data-wensity-input][data-error] .wensity-input-control:-webkit-autofill,\n    [data-wensity-input][data-error] .wensity-input-control:-webkit-autofill:hover,\n    [data-wensity-input][data-error] .wensity-input-control:-webkit-autofill:focus,\n    [data-wensity-input][data-error] .wensity-input-control:-webkit-autofill:active,\n    [data-wensity-input][data-error] .wensity-input-control:autofill {\n      -webkit-box-shadow: 0 0 0 1000px var(--background) inset !important;\n      box-shadow: 0 0 0 1000px var(--background) inset !important;\n    }\n\n    [data-wensity-input][data-readonly] .wensity-input-control:-webkit-autofill,\n    [data-wensity-input][data-readonly] .wensity-input-control:-webkit-autofill:hover,\n    [data-wensity-input][data-readonly] .wensity-input-control:-webkit-autofill:focus,\n    [data-wensity-input][data-readonly] .wensity-input-control:-webkit-autofill:active,\n    [data-wensity-input][data-readonly] .wensity-input-control:autofill {\n      -webkit-box-shadow: 0 0 0 1000px color-mix(in srgb, var(--foreground) 2.5%, var(--background)) inset !important;\n      box-shadow: 0 0 0 1000px color-mix(in srgb, var(--foreground) 2.5%, var(--background)) inset !important;\n      -webkit-text-fill-color: var(--muted-foreground) !important;\n      color: var(--muted-foreground) !important;\n    }\n\n    [data-wensity-input]:hover:not([data-disabled]):not([data-readonly]):not([data-error]) .wensity-input-control:-webkit-autofill,\n    [data-wensity-input]:hover:not([data-disabled]):not([data-readonly]):not([data-error]) .wensity-input-control:-webkit-autofill:hover,\n    [data-wensity-input]:hover:not([data-disabled]):not([data-readonly]):not([data-error]) .wensity-input-control:autofill {\n      -webkit-box-shadow: 0 0 0 1000px var(--background) inset !important;\n      box-shadow: 0 0 0 1000px var(--background) inset !important;\n    }\n  `;\n  document.head.appendChild(style);\n}\n\nexport const Input = React.forwardRef<HTMLInputElement, InputProps>(\n  (\n    {\n      id,\n      className,\n      containerClassName,\n      inputClassName,\n      label,\n      hint,\n      error,\n      leftIcon,\n      rightIcon,\n      clearable = false,\n      onClear,\n      inputSize = \"md\",\n      fullWidth = true,\n      disabled,\n      readOnly,\n      value,\n      defaultValue,\n      onChange,\n      \"aria-describedby\": ariaDescribedBy,\n      ...props\n    },\n    ref,\n  ) => {\n    const reactId = React.useId();\n    const inputId = id ?? `wensity-input-${reactId}`;\n    const hintId = hint ? `${inputId}-hint` : undefined;\n    const errorId = error ? `${inputId}-error` : undefined;\n    const inputRef = React.useRef<HTMLInputElement | null>(null);\n    const isControlled = value !== undefined;\n    const [uncontrolledValue, setUncontrolledValue] = React.useState(\n      defaultValue?.toString() ?? \"\",\n    );\n    const currentValue = isControlled ? value : uncontrolledValue;\n    const hasValue = currentValue != null && String(currentValue).length > 0;\n    const showClear = clearable && hasValue && !disabled && !readOnly;\n    const describedBy =\n      [ariaDescribedBy, errorId, hintId].filter(Boolean).join(\" \") || undefined;\n\n    const setRefs = React.useCallback(\n      (node: HTMLInputElement | null) => {\n        inputRef.current = node;\n        if (typeof ref === \"function\") {\n          ref(node);\n        } else if (ref) {\n          ref.current = node;\n        }\n      },\n      [ref],\n    );\n\n    const handleChange = React.useCallback(\n      (event: React.ChangeEvent<HTMLInputElement>) => {\n        if (!isControlled) setUncontrolledValue(event.target.value);\n        onChange?.(event);\n      },\n      [isControlled, onChange],\n    );\n\n    const handleClear = React.useCallback(() => {\n      if (!isControlled) setUncontrolledValue(\"\");\n      onClear?.();\n      window.requestAnimationFrame(() => inputRef.current?.focus());\n    }, [isControlled, onClear]);\n\n    React.useLayoutEffect(() => {\n      ensureInputAutofillStyles();\n    }, []);\n\n    return (\n      <div\n        className={cn(\n          \"flex flex-col gap-1.5\",\n          fullWidth ? \"w-full\" : \"w-fit\",\n          containerClassName,\n        )}\n      >\n        {label ? (\n          <label\n            htmlFor={inputId}\n            className=\"text-[13px] font-normal leading-none tracking-[-0.01em] text-[var(--foreground)]\"\n          >\n            {label}\n          </label>\n        ) : null}\n\n        <div\n          className={cn(\n            \"relative\",\n            fullWidth ? \"w-full\" : \"w-fit\",\n            className,\n          )}\n        >\n          <div\n            data-wensity-input=\"\"\n            data-error={error ? \"\" : undefined}\n            data-readonly={readOnly ? \"\" : undefined}\n            data-disabled={disabled ? \"\" : undefined}\n            className={cn(\n              fieldBase,\n              !disabled && !readOnly && !error && fieldInteractive,\n              error && fieldError,\n              disabled && fieldDisabled,\n              readOnly && fieldReadOnly,\n              fieldSizes[inputSize],\n            )}\n          >\n            {leftIcon ? (\n              <span\n                aria-hidden=\"true\"\n                className={cn(iconSlot, iconPad[inputSize])}\n              >\n                {leftIcon}\n              </span>\n            ) : null}\n\n            <input\n              ref={setRefs}\n              id={inputId}\n              value={isControlled ? value : uncontrolledValue}\n              disabled={disabled}\n              readOnly={readOnly}\n              aria-invalid={error ? true : undefined}\n              aria-describedby={describedBy}\n              onChange={handleChange}\n              className={cn(\n                \"wensity-input-control min-w-0 flex-1 border-0 bg-transparent text-[var(--foreground)] outline-none\",\n                \"placeholder:text-[var(--muted-foreground)]/60\",\n                \"disabled:cursor-not-allowed\",\n                \"read-only:cursor-default read-only:text-[var(--muted-foreground)]\",\n                inputSizes[inputSize],\n                inputClassName,\n              )}\n              {...props}\n            />\n\n            {showClear ? (\n              <span\n                className={cn(\n                  \"inline-flex shrink-0 items-center\",\n                  trailingPad[inputSize],\n                )}\n              >\n                <button\n                  type=\"button\"\n                  aria-label=\"Clear input\"\n                  onClick={handleClear}\n                  className={cn(\n                    \"grid size-6 place-items-center text-[var(--muted-foreground)]/70\",\n                    \"transition-colors duration-150 ease-out\",\n                    \"hover:text-[var(--foreground)]\",\n                    \"focus-visible:outline-none focus-visible:text-[var(--foreground)]\",\n                  )}\n                >\n                  <IconX aria-hidden=\"true\" className=\"size-3.5\" />\n                </button>\n              </span>\n            ) : rightIcon ? (\n              <span\n                aria-hidden=\"true\"\n                className={cn(iconSlot, trailingPad[inputSize])}\n              >\n                {rightIcon}\n              </span>\n            ) : null}\n          </div>\n        </div>\n\n        {error ? (\n          <p\n            id={errorId}\n            className=\"text-[12px] leading-5 text-red-600 dark:text-red-400\"\n          >\n            {error}\n          </p>\n        ) : hint ? (\n          <p\n            id={hintId}\n            className=\"text-[12px] leading-5 text-[var(--muted-foreground)]/80\"\n          >\n            {hint}\n          </p>\n        ) : null}\n      </div>\n    );\n  },\n);\n\nInput.displayName = \"Input\";\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/input.tsx. For Pro components and updates, use pnpm dlx wensity@latest add input.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "input",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/components/input",
+      "shadcnUrl": "https://ui.wensity.com/r/input",
+      "cliInstall": "pnpm dlx wensity@latest add input"
+    }
+  }
+}

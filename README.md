@@ -28,6 +28,15 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
 - `interactive-beam-connections` - Interactive Beam Connections
+- `button` - Button
+- `input` - Input
+- `textarea` - Textarea
+- `select` - Select
+- `form-field` - FormField
+- `badge` - Badge
+- `checkbox` - Checkbox
+- `switch` - Switch
+- `radio-group` - Radio Group
 - `bento-grid` - Bento Grid
 
 ## Source

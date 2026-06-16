@@ -1,0 +1,143 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "type": "registry:block",
+  "title": "Button",
+  "description": "A small, dependable action primitive for app interfaces. Use one install command and compose default, secondary, outline, ghost, white, destructive, icon, loading, and disabled states from the same Button API.",
+  "author": "Wensity <hello@wensity.com>",
+  "dependencies": [
+    "@radix-ui/react-dropdown-menu",
+    "@radix-ui/react-slot",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "packages/ui/src/components/library/ui-primitives/Button.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/button.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as DropdownMenu from \"@radix-ui/react-dropdown-menu\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { cn } from \"@/lib/utils\";\n\nexport type ButtonVariant =\n  | \"default\"\n  | \"secondary\"\n  | \"outline\"\n  | \"ghost\"\n  | \"white\"\n  | \"destructive\"\n  | \"link\";\n\nexport type ButtonSize = \"sm\" | \"md\" | \"lg\" | \"icon\";\n\nexport interface ButtonProps\n  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, \"disabled\"> {\n  variant?: ButtonVariant;\n  size?: ButtonSize;\n  asChild?: boolean;\n  loading?: boolean;\n  disabled?: boolean;\n  leftIcon?: React.ReactNode;\n  rightIcon?: React.ReactNode;\n  /** Animate the left icon on hover. */\n  leftIconMotion?: \"trash\" | \"mail\";\n  /** Animate the right icon on hover. */\n  rightIconMotion?: \"arrow\" | \"download\";\n}\n\nconst base =\n  \"relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[10px] \" +\n  \"text-sm font-medium select-none touch-manipulation \" +\n  \"transition-[background,background-color,border-color,color,box-shadow,opacity] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] \" +\n  \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] \" +\n  \"disabled:pointer-events-none disabled:opacity-45 \" +\n  \"[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0\";\n\nconst pressable = \"active:duration-100\";\n\nconst variants: Record<ButtonVariant, string> = {\n  default: cn(\n    pressable,\n    \"border border-[color-mix(in_srgb,var(--foreground)_14%,transparent)] bg-[var(--foreground)] text-[var(--background)] \" +\n      \"shadow-[0_1px_1px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.10)] \" +\n      \"hover:border-[color-mix(in_srgb,var(--foreground)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--foreground)_94%,var(--background)_6%)] \" +\n      \"hover:shadow-[0_1px_2px_rgba(0,0,0,0.06),0_6px_20px_-6px_rgba(0,0,0,0.16)] \" +\n      \"active:border-[color-mix(in_srgb,var(--foreground)_16%,transparent)] active:bg-[var(--foreground)] active:shadow-[0_1px_2px_rgba(0,0,0,0.08)]\",\n  ),\n  secondary: cn(\n    pressable,\n    \"border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--foreground)] \" +\n      \"shadow-[0_1px_1px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.04)] \" +\n      \"hover:border-[color-mix(in_srgb,var(--foreground)_16%,transparent)] hover:bg-[var(--surface-muted)] \" +\n      \"hover:shadow-[0_1px_2px_rgba(0,0,0,0.05),0_6px_20px_-8px_rgba(0,0,0,0.10)] \" +\n      \"active:bg-[color-mix(in_srgb,var(--surface-muted)_90%,var(--foreground)_10%)] \" +\n      \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.30)] dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_6px_20px_-8px_rgba(0,0,0,0.45)]\",\n  ),\n  outline: cn(\n    pressable,\n    \"border border-[var(--border-strong)] bg-transparent text-[var(--foreground)] \" +\n      \"hover:border-[color-mix(in_srgb,var(--foreground)_24%,transparent)] hover:bg-[color-mix(in_srgb,var(--foreground)_4%,transparent)] \" +\n      \"hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_6px_20px_-10px_rgba(0,0,0,0.10)] \" +\n      \"active:border-[color-mix(in_srgb,var(--foreground)_20%,transparent)] active:bg-[color-mix(in_srgb,var(--foreground)_7%,transparent)] \" +\n      \"dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.20),0_6px_20px_-10px_rgba(0,0,0,0.40)]\",\n  ),\n  ghost: cn(\n    pressable,\n    \"border border-transparent bg-transparent text-[var(--muted-foreground)] \" +\n      \"hover:bg-[color-mix(in_srgb,var(--foreground)_5%,transparent)] hover:text-[var(--foreground)] \" +\n      \"active:bg-[color-mix(in_srgb,var(--foreground)_9%,transparent)]\",\n  ),\n  white: cn(\n    pressable,\n    \"border border-black/[0.06] bg-white text-neutral-950 \" +\n      \"shadow-[0_1px_1px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.08)] \" +\n      \"hover:border-black/[0.10] hover:bg-neutral-50 \" +\n      \"hover:shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_-8px_rgba(0,0,0,0.14)] \" +\n      \"active:bg-neutral-100 active:shadow-[0_1px_2px_rgba(0,0,0,0.06)] \" +\n      \"dark:border-white/85 dark:bg-white dark:text-neutral-950 dark:shadow-[0_1px_2px_rgba(0,0,0,0.24)] \" +\n      \"dark:hover:border-white dark:hover:bg-neutral-50 \" +\n      \"dark:hover:shadow-[0_1px_2px_rgba(0,0,0,0.10),0_8px_24px_-8px_rgba(255,255,255,0.18)] \" +\n      \"dark:active:bg-neutral-100\",\n  ),\n  destructive: cn(\n    pressable,\n    \"border border-red-600/75 bg-red-600 text-white \" +\n      \"shadow-[0_1px_1px_rgba(127,29,29,0.20),0_1px_3px_rgba(127,29,29,0.16)] \" +\n      \"hover:border-red-500/85 hover:bg-red-500 \" +\n      \"hover:shadow-[0_1px_2px_rgba(127,29,29,0.24),0_8px_24px_-8px_rgba(239,68,68,0.30)] \" +\n      \"active:border-red-700 active:bg-red-700 active:shadow-[0_1px_2px_rgba(127,29,29,0.28)] \" +\n      \"dark:border-red-500/65 dark:hover:shadow-[0_8px_24px_-8px_rgba(248,113,113,0.28)]\",\n  ),\n  link:\n    \"h-auto border border-transparent bg-transparent px-0 font-medium text-[var(--foreground)] underline-offset-4 \" +\n    \"hover:text-[var(--muted-foreground)] hover:underline hover:decoration-[color-mix(in_srgb,var(--foreground)_35%,transparent)] \" +\n    \"active:text-[var(--foreground)]\",\n};\n\nconst sizes: Record<ButtonSize, string> = {\n  sm: \"h-8 gap-1.5 px-3.5 text-xs\",\n  md: \"h-9 gap-2 px-4\",\n  lg: \"h-10 gap-2 px-5 text-[15px]\",\n  icon: \"h-9 w-9 gap-0 p-0\",\n};\n\nconst ICON_SHELL = \"relative z-10 inline-flex shrink-0\";\n\nconst ICON_MOTION_SHELL =\n  \"btn-icon-motion inline-flex shrink-0 origin-center will-change-transform\";\n\nconst leftIconMotionClass = {\n  trash: cn(\n    ICON_MOTION_SHELL,\n    \"motion-safe:group-hover:animate-[button-trash-shake_0.42s_cubic-bezier(0.36,0.07,0.19,0.97)_both]\",\n  ),\n  mail: cn(\n    ICON_MOTION_SHELL,\n    \"motion-safe:group-hover:animate-[button-mail-lift_0.44s_cubic-bezier(0.22,1,0.36,1)_both]\",\n  ),\n} as const;\n\nconst rightIconMotionClass = {\n  arrow: cn(\n    ICON_MOTION_SHELL,\n    \"motion-safe:transition-transform motion-safe:duration-[320ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]\",\n    \"motion-safe:group-hover:translate-x-1\",\n    \"motion-safe:group-active:translate-x-0.5\",\n  ),\n  download: cn(\n    ICON_MOTION_SHELL,\n    \"motion-safe:group-hover:animate-[button-download-tick_0.4s_cubic-bezier(0.34,1.2,0.64,1)_both]\",\n  ),\n} as const;\n\nconst BUTTON_ICON_KEYFRAMES_ID = \"button-icon-keyframes\";\n\nfunction ensureButtonIconKeyframes() {\n  if (typeof document === \"undefined\") return;\n  if (document.getElementById(BUTTON_ICON_KEYFRAMES_ID)) return;\n\n  const style = document.createElement(\"style\");\n  style.id = BUTTON_ICON_KEYFRAMES_ID;\n  style.textContent = `\n    @keyframes button-trash-shake {\n      0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }\n      20% { transform: translate3d(-0.5px, -1px, 0) rotate(-5deg); }\n      40% { transform: translate3d(0.5px, -1.5px, 0) rotate(4deg); }\n      60% { transform: translate3d(-0.5px, -0.5px, 0) rotate(-2.5deg); }\n      80% { transform: translate3d(0, -0.5px, 0) rotate(1deg); }\n    }\n    @keyframes button-mail-lift {\n      0% { transform: translate3d(0, 0, 0) rotate(0deg); }\n      40% { transform: translate3d(2.5px, -3.5px, 0) rotate(-7deg); }\n      100% { transform: translate3d(0, 0, 0) rotate(0deg); }\n    }\n    @keyframes button-download-tick {\n      0%, 100% { transform: translate3d(0, 0, 0); }\n      45% { transform: translate3d(0, 3.5px, 0); }\n      100% { transform: translate3d(0, 0, 0); }\n    }\n    @media (prefers-reduced-motion: reduce) {\n      .btn-icon-motion {\n        animation: none !important;\n        transition: none !important;\n        transform: none !important;\n      }\n    }\n  `;\n  document.head.appendChild(style);\n}\n\nexport function buttonVariants({\n  variant = \"default\",\n  size = \"md\",\n  className,\n}: {\n  variant?: ButtonVariant;\n  size?: ButtonSize;\n  className?: string;\n} = {}) {\n  return cn(base, variants[variant], sizes[size], className);\n}\n\nexport const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(\n  (\n    {\n      className,\n      variant = \"default\",\n      size = \"md\",\n      asChild = false,\n      loading = false,\n      disabled = false,\n      leftIcon,\n      rightIcon,\n      leftIconMotion,\n      rightIconMotion,\n      children,\n      type,\n      onClickCapture,\n      tabIndex,\n      ...props\n    },\n    ref,\n  ) => {\n    const Comp = asChild ? Slot : \"button\";\n    const isDisabled = disabled || loading;\n    const hasIconMotion = Boolean(leftIconMotion || rightIconMotion);\n\n    const handleClickCapture = React.useCallback(\n      (event: React.MouseEvent<HTMLButtonElement>) => {\n        if (asChild && isDisabled) {\n          event.preventDefault();\n          event.stopPropagation();\n          return;\n        }\n\n        onClickCapture?.(event);\n      },\n      [asChild, isDisabled, onClickCapture],\n    );\n\n    React.useLayoutEffect(() => {\n      if (hasIconMotion) ensureButtonIconKeyframes();\n    }, [hasIconMotion]);\n\n    return (\n      <Comp\n        ref={ref}\n        className={buttonVariants({\n          variant,\n          size,\n          className: cn(\n            hasIconMotion && \"group\",\n            asChild && isDisabled && \"pointer-events-none opacity-45\",\n            className,\n          ),\n        })}\n        aria-disabled={asChild && isDisabled ? true : undefined}\n        aria-busy={loading ? true : undefined}\n        disabled={!asChild ? isDisabled : undefined}\n        data-loading={loading ? \"\" : undefined}\n        onClickCapture={handleClickCapture}\n        tabIndex={asChild && isDisabled ? -1 : tabIndex}\n        type={!asChild ? (type ?? \"button\") : undefined}\n        {...props}\n      >\n        {loading && <ButtonSpinner />}\n        {!loading && leftIcon && (\n          <span\n            className={cn(\n              ICON_SHELL,\n              leftIconMotion && leftIconMotionClass[leftIconMotion],\n            )}\n          >\n            {leftIcon}\n          </span>\n        )}\n        <span className=\"relative z-10 inline-flex items-center gap-2\">\n          {children}\n        </span>\n        {!loading && rightIcon && (\n          <span\n            className={cn(\n              ICON_SHELL,\n              rightIconMotion && rightIconMotionClass[rightIconMotion],\n            )}\n          >\n            {rightIcon}\n          </span>\n        )}\n      </Comp>\n    );\n  },\n);\n\nButton.displayName = \"Button\";\n\nfunction ButtonSpinner() {\n  return (\n    <span\n      aria-hidden=\"true\"\n      className=\"relative z-10 size-3.5 shrink-0 rounded-full border-2 border-current border-r-transparent opacity-80 motion-safe:animate-spin\"\n    />\n  );\n}\n\nexport interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {\n  orientation?: \"horizontal\" | \"vertical\";\n}\n\nexport function ButtonGroup({\n  className,\n  orientation = \"horizontal\",\n  ...props\n}: ButtonGroupProps) {\n  return (\n    <div\n      role=\"group\"\n      className={cn(\n        \"relative inline-flex overflow-hidden rounded-[10px] border border-[var(--border-strong)] bg-transparent\",\n        orientation === \"horizontal\" ? \"flex-row items-stretch\" : \"flex-col\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nconst groupItemClass =\n  \"rounded-none border-0 shadow-none \" +\n  \"focus-visible:relative focus-visible:z-10 hover:z-10 \" +\n  \"[&:not(:last-child)]:border-r [&:not(:last-child)]:border-[var(--border-strong)]\";\n\nexport type ButtonGroupItemProps = ButtonProps;\n\nexport const ButtonGroupItem = React.forwardRef<\n  HTMLButtonElement,\n  ButtonGroupItemProps\n>(({ className, variant = \"outline\", ...props }, ref) => {\n  return (\n    <Button\n      ref={ref}\n      variant={variant}\n      className={cn(groupItemClass, className)}\n      {...props}\n    />\n  );\n});\n\nButtonGroupItem.displayName = \"ButtonGroupItem\";\n\nexport interface ButtonGroupSeparatorProps\n  extends React.HTMLAttributes<HTMLDivElement> {\n  orientation?: \"horizontal\" | \"vertical\";\n}\n\nexport function ButtonGroupSeparator({\n  className,\n  orientation = \"vertical\",\n  ...props\n}: ButtonGroupSeparatorProps) {\n  return (\n    <div\n      role=\"separator\"\n      aria-orientation={orientation}\n      className={cn(\n        \"shrink-0 bg-[var(--border-strong)]\",\n        orientation === \"vertical\" ? \"w-px self-stretch\" : \"h-px w-full\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function ButtonGroupMenu(\n  props: React.ComponentProps<typeof DropdownMenu.Root>,\n) {\n  return <DropdownMenu.Root modal={false} {...props} />;\n}\n\nconst menuTriggerClass =\n  \"data-[state=open]:z-20 data-[state=open]:bg-[color-mix(in_srgb,var(--foreground)_4%,transparent)]\";\n\nexport const ButtonGroupMenuTrigger = React.forwardRef<\n  HTMLButtonElement,\n  ButtonGroupItemProps\n>(({ className, ...props }, ref) => {\n  return (\n    <DropdownMenu.Trigger asChild>\n      <ButtonGroupItem\n        ref={ref}\n        className={cn(menuTriggerClass, className)}\n        {...props}\n      />\n    </DropdownMenu.Trigger>\n  );\n});\n\nButtonGroupMenuTrigger.displayName = \"ButtonGroupMenuTrigger\";\n\nexport interface ButtonGroupMenuContentProps\n  extends React.ComponentPropsWithoutRef<typeof DropdownMenu.Content> {\n  align?: \"start\" | \"center\" | \"end\";\n  sideOffset?: number;\n}\n\nexport function ButtonGroupMenuContent({\n  className,\n  align = \"end\",\n  sideOffset = 8,\n  ...props\n}: ButtonGroupMenuContentProps) {\n  return (\n    <DropdownMenu.Portal>\n      <DropdownMenu.Content\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={12}\n        className={cn(\n          \"z-50 min-w-[12.5rem] origin-top-right overflow-hidden rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] p-1\",\n          \"shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_-10px_rgba(0,0,0,0.22)]\",\n          \"dark:shadow-[0_12px_32px_-10px_rgba(0,0,0,0.62)]\",\n          \"data-[state=open]:animate-in data-[state=open]:fade-in-0\",\n          \"data-[state=closed]:animate-out data-[state=closed]:fade-out-0\",\n          className,\n        )}\n        {...props}\n      />\n    </DropdownMenu.Portal>\n  );\n}\n\nexport interface ButtonGroupMenuItemProps\n  extends React.ComponentPropsWithoutRef<typeof DropdownMenu.Item> {\n  icon?: React.ReactNode;\n  destructive?: boolean;\n  shortcut?: string;\n}\n\nexport const ButtonGroupMenuItem = React.forwardRef<\n  HTMLDivElement,\n  ButtonGroupMenuItemProps\n>(\n  (\n    { className, children, icon, destructive = false, shortcut, ...props },\n    ref,\n  ) => {\n    return (\n      <DropdownMenu.Item\n        ref={ref}\n        className={cn(\n          \"group/menu-item relative flex cursor-pointer select-none items-center gap-2.5 rounded-[7px] px-2.5 py-2 text-sm outline-none\",\n          \"transition-colors duration-150\",\n          destructive\n            ? \"text-red-600 data-[highlighted]:bg-red-500/10 data-[highlighted]:text-red-600 dark:text-red-400 dark:data-[highlighted]:text-red-400\"\n            : \"text-[var(--foreground)] data-[highlighted]:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)]\",\n          \"data-[disabled]:pointer-events-none data-[disabled]:opacity-45\",\n          className,\n        )}\n        {...props}\n      >\n        {icon ? (\n          <span\n            className={cn(\n              \"inline-flex size-4 shrink-0 items-center justify-center [&_svg]:size-4\",\n              destructive\n                ? \"text-red-500/90 dark:text-red-400/90\"\n                : \"text-[var(--muted-foreground)] group-data-[highlighted]/menu-item:text-[var(--foreground)]\",\n            )}\n          >\n            {icon}\n          </span>\n        ) : null}\n        <span className=\"min-w-0 flex-1 truncate\">{children}</span>\n        {shortcut ? (\n          <span className=\"ml-auto shrink-0 text-[11px] tabular-nums text-[var(--muted-foreground)]\">\n            {shortcut}\n          </span>\n        ) : null}\n      </DropdownMenu.Item>\n    );\n  },\n);\n\nButtonGroupMenuItem.displayName = \"ButtonGroupMenuItem\";\n\nexport function ButtonGroupMenuSeparator({\n  className,\n  ...props\n}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Separator>) {\n  return (\n    <DropdownMenu.Separator\n      className={cn(\"my-1 h-px bg-[var(--border-strong)]\", className)}\n      {...props}\n    />\n  );\n}\n\nexport function ButtonGroupMenuLabel({\n  className,\n  ...props\n}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Label>) {\n  return (\n    <DropdownMenu.Label\n      className={cn(\n        \"px-2.5 py-1.5 text-[11px] font-medium uppercase text-[var(--muted-foreground)]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/button.tsx. For Pro components and updates, use pnpm dlx wensity@latest add button.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "button",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/components/button",
+      "shadcnUrl": "https://ui.wensity.com/r/button",
+      "cliInstall": "pnpm dlx wensity@latest add button"
+    }
+  }
+}

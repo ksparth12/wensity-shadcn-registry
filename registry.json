@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "wensity",
   "homepage": "https://ui.wensity.com",
-  "count": 13,
+  "count": 22,
   "items": [
     {
       "name": "liquid-multimodal-input",
@@ -229,6 +229,173 @@
       "meta": {
         "componentUrl": "https://ui.wensity.com/components/interactive-beam-connections",
         "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
+      }
+    },
+    {
+      "name": "button",
+      "type": "registry:block",
+      "title": "Button",
+      "description": "Accessible button with variants, sizes, icons, and loading state.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-dropdown-menu"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/button.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/button",
+        "cliInstall": "pnpm dlx wensity@latest add button"
+      }
+    },
+    {
+      "name": "input",
+      "type": "registry:block",
+      "title": "Input",
+      "description": "Accessible text input with label, hint, error, icons, and clear action.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/input.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/input",
+        "cliInstall": "pnpm dlx wensity@latest add input"
+      }
+    },
+    {
+      "name": "textarea",
+      "type": "registry:block",
+      "title": "Textarea",
+      "description": "Accessible multi-line input with variants, auto-resize, counts, and validation.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/textarea.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/textarea",
+        "cliInstall": "pnpm dlx wensity@latest add textarea"
+      }
+    },
+    {
+      "name": "select",
+      "type": "registry:block",
+      "title": "Select",
+      "description": "Accessible select with polished triggers, grouped options, and controlled state.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@radix-ui/react-dropdown-menu"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/select.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/select",
+        "cliInstall": "pnpm dlx wensity@latest add select"
+      }
+    },
+    {
+      "name": "form-field",
+      "type": "registry:block",
+      "title": "FormField",
+      "description": "Composable form field wrapper with labels, descriptions, errors, and section layouts.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/form-field.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/form-field",
+        "cliInstall": "pnpm dlx wensity@latest add form-field"
+      }
+    },
+    {
+      "name": "badge",
+      "type": "registry:block",
+      "title": "Badge",
+      "description": "Polished status and metadata badges with icons, dots, removable chips, and subtle depth.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@tabler/icons-react"
+      ],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/badge.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/badge",
+        "cliInstall": "pnpm dlx wensity@latest add badge"
+      }
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:block",
+      "title": "Checkbox",
+      "description": "Accessible checkbox with distinct visual variants, groups, cards, and indeterminate state.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/checkbox.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/checkbox",
+        "cliInstall": "pnpm dlx wensity@latest add checkbox"
+      }
+    },
+    {
+      "name": "switch",
+      "type": "registry:block",
+      "title": "Switch",
+      "description": "Accessible switch with distinct variants, smooth motion, groups, cards, and controlled state.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/switch.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/switch",
+        "cliInstall": "pnpm dlx wensity@latest add switch"
+      }
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:block",
+      "title": "Radio Group",
+      "description": "Native radio selection with distinctive rows, segments, cards, and controlled state.",
+      "categories": [
+        "UI Primitives",
+        "wensity",
+        "free"
+      ],
+      "dependencies": [],
+      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/radio-group.json",
+      "meta": {
+        "componentUrl": "https://ui.wensity.com/components/radio-group",
+        "cliInstall": "pnpm dlx wensity@latest add radio-group"
       }
     },
     {
