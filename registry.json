@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "wensity",
   "homepage": "https://ui.wensity.com",
-  "count": 22,
+  "count": 19,
   "items": [
     {
       "name": "liquid-multimodal-input",
@@ -22,26 +22,6 @@
       "meta": {
         "componentUrl": "https://ui.wensity.com/components/liquid-multimodal-input",
         "cliInstall": "pnpm dlx wensity@latest add liquid-multimodal-input"
-      }
-    },
-    {
-      "name": "stream-reveal-typography",
-      "type": "registry:block",
-      "title": "Stream Reveal Typography",
-      "description": "LLM token streaming, without the snap.",
-      "categories": [
-        "Agentic AI Interfaces",
-        "wensity",
-        "free"
-      ],
-      "dependencies": [
-        "framer-motion",
-        "@tabler/icons-react"
-      ],
-      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/stream-reveal-typography.json",
-      "meta": {
-        "componentUrl": "https://ui.wensity.com/components/stream-reveal-typography",
-        "cliInstall": "pnpm dlx wensity@latest add stream-reveal-typography"
       }
     },
     {
@@ -122,25 +102,6 @@
       }
     },
     {
-      "name": "parallax-tilt-card-3d",
-      "type": "registry:block",
-      "title": "3D Parallax Tilt Card",
-      "description": "A card that tilts to the cursor, with real reflected glare.",
-      "categories": [
-        "Cinematic Interactions",
-        "wensity",
-        "free"
-      ],
-      "dependencies": [
-        "framer-motion"
-      ],
-      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/parallax-tilt-card-3d.json",
-      "meta": {
-        "componentUrl": "https://ui.wensity.com/components/parallax-tilt-card-3d",
-        "cliInstall": "pnpm dlx wensity@latest add parallax-tilt-card-3d"
-      }
-    },
-    {
       "name": "infinite-marquee",
       "type": "registry:block",
       "title": "Infinite Marquee",
@@ -210,25 +171,6 @@
       "meta": {
         "componentUrl": "https://ui.wensity.com/components/scrubbable-video-reveal",
         "cliInstall": "pnpm dlx wensity@latest add scrubbable-video-reveal"
-      }
-    },
-    {
-      "name": "interactive-beam-connections",
-      "type": "registry:block",
-      "title": "Interactive Beam Connections",
-      "description": "Glowing laser beams that auto-route between any two cards.",
-      "categories": [
-        "Cinematic Interactions",
-        "wensity",
-        "free"
-      ],
-      "dependencies": [
-        "framer-motion"
-      ],
-      "href": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/interactive-beam-connections.json",
-      "meta": {
-        "componentUrl": "https://ui.wensity.com/components/interactive-beam-connections",
-        "cliInstall": "pnpm dlx wensity@latest add interactive-beam-connections"
       }
     },
     {

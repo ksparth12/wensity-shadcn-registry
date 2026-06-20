@@ -17,17 +17,14 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 ## Components
 
 - `liquid-multimodal-input` - Liquid Multimodal Input
-- `stream-reveal-typography` - Stream Reveal Typography
 - `generative-skeleton-mesh` - Generative Skeleton Mesh
 - `voice-aurora-wave` - Voice Aurora Wave
 - `model-context-switcher` - Model Context Switcher
 - `dynamic-island-toast` - Dynamic Island Toast
-- `parallax-tilt-card-3d` - 3D Parallax Tilt Card
 - `infinite-marquee` - Infinite Marquee
 - `apple-sticky-scroll-sequence` - Apple-Style Sticky Scroll
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
-- `interactive-beam-connections` - Interactive Beam Connections
 - `button` - Button
 - `input` - Input
 - `textarea` - Textarea
