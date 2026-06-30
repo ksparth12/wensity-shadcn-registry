@@ -1,0 +1,144 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "popover",
+  "type": "registry:block",
+  "title": "Popover",
+  "description": "Floating panels for menus, inline forms, previews, and controlled state.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@radix-ui/react-popover",
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/popover.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/popover.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as PopoverPrimitive from \"@radix-ui/react-popover\";\nimport { cn } from \"@/lib/utils\";\n\nexport type PopoverVariant = \"default\" | \"form\" | \"menu\" | \"rich\";\n\nexport const Popover = PopoverPrimitive.Root;\nexport const PopoverTrigger = PopoverPrimitive.Trigger;\nexport const PopoverAnchor = PopoverPrimitive.Anchor;\nexport const PopoverClose = PopoverPrimitive.Close;\n\nexport interface PopoverContentProps\n  extends React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> {\n  variant?: PopoverVariant;\n  /** Width preset — menu stays compact, form/rich expand. */\n  width?: \"auto\" | \"sm\" | \"md\" | \"lg\";\n}\n\nconst variantClasses: Record<PopoverVariant, string> = {\n  default: \"p-4\",\n  form: \"p-0\",\n  menu: \"p-1.5\",\n  rich: \"p-0 overflow-hidden\",\n};\n\nconst widthClasses: Record<NonNullable<PopoverContentProps[\"width\"]>, string> = {\n  auto: \"w-auto min-w-[12rem]\",\n  sm: \"w-[14rem]\",\n  md: \"w-[18rem]\",\n  lg: \"w-[22rem]\",\n};\n\nconst popoverSurfaceClass =\n  \"border border-[#ded3c5] bg-[#f7f2e9] text-[#181716] \" +\n  \"[box-shadow:0_26px_72px_-34px_rgba(0,0,0,.78),0_12px_34px_-20px_rgba(18,16,13,.46),0_1px_2px_rgba(18,16,13,.10)]\";\n\nconst popoverTokenClass =\n  \"[--background:#fffaf2] [--foreground:#181716] [--muted-foreground:#655d52] [--border:#d8cab8] [--surface:#fffaf2]\";\n\nexport function PopoverContent({\n  className,\n  variant = \"default\",\n  width = \"auto\",\n  align = \"center\",\n  sideOffset = 6,\n  collisionPadding = 12,\n  ...props\n}: PopoverContentProps) {\n  return (\n    <PopoverPrimitive.Portal>\n      <PopoverPrimitive.Content\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={collisionPadding}\n        className={cn(\n          \"z-[120] origin-[var(--radix-popover-content-transform-origin)] transform-gpu outline-none\",\n          popoverSurfaceClass,\n          popoverTokenClass,\n          \"rounded-[18px]\",\n          \"data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95\",\n          \"data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2\",\n          \"data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2\",\n          \"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95\",\n          \"data-[state=open]:duration-180 data-[state=closed]:duration-120\",\n          \"data-[state=open]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[state=closed]:ease-[cubic-bezier(0.23,1,0.32,1)]\",\n          \"motion-reduce:animate-none\",\n          widthClasses[width],\n          variantClasses[variant],\n          className,\n        )}\n        {...props}\n      />\n    </PopoverPrimitive.Portal>\n  );\n}\n\nexport function PopoverHeader({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div\n      className={cn(\n        \"border-b border-[#e4dbcf] px-4 py-3\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function PopoverBody({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn(\"px-4 py-3\", className)} {...props} />;\n}\n\nexport function PopoverTitle({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLParagraphElement>) {\n  return (\n    <p\n      className={cn(\n        \"text-sm font-semibold tracking-[-0.01em] text-[#181716]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function PopoverDescription({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLParagraphElement>) {\n  return (\n    <p\n      className={cn(\n        \"mt-1 text-[12px] leading-[1.5] text-[#655d52]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport interface PopoverMenuItemProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  inset?: boolean;\n  destructive?: boolean;\n}\n\nexport function PopoverMenuItem({\n  className,\n  inset,\n  destructive,\n  ...props\n}: PopoverMenuItemProps) {\n  return (\n    <button\n      type=\"button\"\n      className={cn(\n        \"flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[13px]\",\n        \"text-[#24211d] transition-[background-color,color] duration-140 ease-[cubic-bezier(0.23,1,0.32,1)]\",\n        \"hover:bg-[#ede5da]\",\n        \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9aa98]\",\n        inset && \"pl-8\",\n        destructive && \"text-[#b42318] hover:bg-[#f2ded8]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function PopoverMenuSeparator({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div\n      role=\"separator\"\n      className={cn(\"my-1 h-px bg-[#e4dbcf]\", className)}\n      {...props}\n    />\n  );\n}\n\nexport interface PopoverRichMediaProps extends React.HTMLAttributes<HTMLDivElement> {\n  src: string;\n  alt: string;\n}\n\nexport function PopoverRichMedia({ src, alt, className, ...props }: PopoverRichMediaProps) {\n  return (\n    <div className={cn(\"relative aspect-[16/10] w-full overflow-hidden\", className)} {...props}>\n      {/* eslint-disable-next-line @next/next/no-img-element */}\n      <img\n        src={src}\n        alt={alt}\n        className=\"size-full object-cover\"\n      />\n      <div className=\"pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.55)_0%,transparent_55%)]\" />\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/popover.tsx. For Pro components and updates, use pnpm dlx wensity@latest add popover.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "popover",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/popover",
+      "shadcnUrl": "https://ui.wensity.com/r/popover",
+      "cliInstall": "pnpm dlx wensity@latest add popover"
+    }
+  }
+}

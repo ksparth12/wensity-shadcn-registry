@@ -1,0 +1,144 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip",
+  "type": "registry:block",
+  "title": "Tooltip",
+  "description": "Contextual hints with rich content, shortcuts, and cursor tracking.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@radix-ui/react-tooltip",
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/tooltip.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/tooltip.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TooltipPrimitive from \"@radix-ui/react-tooltip\";\nimport { cn } from \"@/lib/utils\";\n\nexport type TooltipVariant = \"default\" | \"rich\" | \"shortcut\" | \"interactive\";\n\nexport interface TooltipProviderProps\n  extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider> {}\n\nexport function TooltipProvider({\n  delayDuration = 400,\n  skipDelayDuration = 280,\n  ...props\n}: TooltipProviderProps) {\n  return (\n    <TooltipPrimitive.Provider\n      delayDuration={delayDuration}\n      skipDelayDuration={skipDelayDuration}\n      {...props}\n    />\n  );\n}\n\nexport const Tooltip = TooltipPrimitive.Root;\nexport const TooltipTrigger = TooltipPrimitive.Trigger;\n\nexport interface TooltipContentProps\n  extends Omit<\n    React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>,\n    \"title\"\n  > {\n  variant?: TooltipVariant;\n  /** Rich tooltip heading — separate from the native `title` attribute. */\n  heading?: React.ReactNode;\n  shortcut?: string[];\n  /** When true, pointer can enter the tooltip (for links/buttons inside). */\n  interactive?: boolean;\n  /** Follow cursor — positions content near pointer instead of trigger center. */\n  followCursor?: boolean;\n}\n\nexport function TooltipContent({\n  className,\n  variant = \"default\",\n  heading,\n  shortcut,\n  interactive = false,\n  followCursor = false,\n  sideOffset = 6,\n  children,\n  ...props\n}: TooltipContentProps) {\n  const [pointer, setPointer] = React.useState<{ x: number; y: number } | null>(null);\n\n  React.useEffect(() => {\n    if (!followCursor) return;\n\n    const handleMove = (event: PointerEvent) => {\n      setPointer({ x: event.clientX, y: event.clientY });\n    };\n\n    window.addEventListener(\"pointermove\", handleMove, { passive: true });\n    return () => window.removeEventListener(\"pointermove\", handleMove);\n  }, [followCursor]);\n\n  const followStyle =\n    followCursor && pointer\n      ? {\n          position: \"fixed\" as const,\n          left: pointer.x + 14,\n          top: pointer.y + 14,\n          transform: \"none\",\n        }\n      : undefined;\n\n  const isRich = variant === \"rich\" || Boolean(heading);\n  const isShortcut = variant === \"shortcut\" || Boolean(shortcut?.length);\n  const isInteractive = variant === \"interactive\" || interactive;\n\n  return (\n    <TooltipPrimitive.Portal>\n      <TooltipPrimitive.Content\n        data-wensity-tooltip-content\n        sideOffset={followCursor ? 0 : sideOffset}\n        className={cn(\n          \"z-[130] max-w-[16rem] rounded-xl border border-[#ded3c5] bg-[#f7f2e9] px-2.5 py-1.5\",\n          \"text-[12px] leading-[1.45] text-[#181716]\",\n          \"[box-shadow:0_20px_52px_-28px_rgba(0,0,0,.78),0_8px_24px_-16px_rgba(18,16,13,.42),0_1px_2px_rgba(18,16,13,.10)]\",\n          \"origin-[var(--radix-tooltip-content-transform-origin)] transform-gpu outline-none\",\n          \"data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95\",\n          \"data-[state=delayed-open]:data-[side=bottom]:slide-in-from-top-1 data-[state=delayed-open]:data-[side=top]:slide-in-from-bottom-1\",\n          \"data-[state=delayed-open]:data-[side=left]:slide-in-from-right-1 data-[state=delayed-open]:data-[side=right]:slide-in-from-left-1\",\n          \"data-[state=instant-open]:animate-none data-[state=instant-open]:opacity-100\",\n          \"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95\",\n          \"data-[state=delayed-open]:duration-150 data-[state=closed]:duration-100\",\n          \"data-[state=delayed-open]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[state=closed]:ease-[cubic-bezier(0.23,1,0.32,1)]\",\n          \"motion-reduce:animate-none\",\n          isRich && \"max-w-[18rem] px-3 py-2.5\",\n          isInteractive && \"pointer-events-auto\",\n          className,\n        )}\n        style={followStyle}\n        onPointerDownOutside={(event) => {\n          if (isInteractive) event.preventDefault();\n        }}\n        {...props}\n      >\n        {isRich && heading ? (\n          <div className=\"space-y-1\">\n            <p className=\"text-[12px] font-semibold text-[#181716]\">{heading}</p>\n            {children ? (\n              <p className=\"text-[11px] leading-[1.45] text-[#655d52]\">\n                {children}\n              </p>\n            ) : null}\n          </div>\n        ) : (\n          children\n        )}\n\n        {isShortcut && shortcut?.length ? (\n          <span className=\"ml-2 inline-flex items-center gap-0.5 align-middle\">\n            {shortcut.map((key) => (\n              <kbd\n                key={key}\n                className={cn(\n                  \"inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-[#d6cab9]\",\n                  \"bg-[#ede5da] px-1\",\n                  \"font-mono text-[10px] font-medium text-[#5f574c]\",\n                )}\n              >\n                {key}\n              </kbd>\n            ))}\n          </span>\n        ) : null}\n\n        {!followCursor ? (\n          <TooltipPrimitive.Arrow\n            className=\"fill-[#f7f2e9]\"\n            width={10}\n            height={5}\n          />\n        ) : null}\n      </TooltipPrimitive.Content>\n    </TooltipPrimitive.Portal>\n  );\n}\n\n/** Convenience wrapper for rich two-line tooltips. */\nexport function TooltipRich({\n  title,\n  description,\n  children,\n  open,\n  defaultOpen,\n  onOpenChange,\n  delayDuration,\n}: {\n  title: React.ReactNode;\n  description: React.ReactNode;\n  children: React.ReactElement;\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  delayDuration?: number;\n}) {\n  return (\n    <Tooltip\n      open={open}\n      defaultOpen={defaultOpen}\n      onOpenChange={onOpenChange}\n      delayDuration={delayDuration}\n    >\n      <TooltipTrigger asChild>{children}</TooltipTrigger>\n      <TooltipContent variant=\"rich\" heading={title}>\n        {description}\n      </TooltipContent>\n    </Tooltip>\n  );\n}\n\n/** Convenience wrapper for shortcut hints. */\nexport function TooltipShortcut({\n  label,\n  shortcut,\n  children,\n  open,\n  defaultOpen,\n  onOpenChange,\n  delayDuration,\n}: {\n  label: React.ReactNode;\n  shortcut: string[];\n  children: React.ReactElement;\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  delayDuration?: number;\n}) {\n  return (\n    <Tooltip\n      open={open}\n      defaultOpen={defaultOpen}\n      onOpenChange={onOpenChange}\n      delayDuration={delayDuration}\n    >\n      <TooltipTrigger asChild>{children}</TooltipTrigger>\n      <TooltipContent variant=\"shortcut\" shortcut={shortcut}>\n        {label}\n      </TooltipContent>\n    </Tooltip>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/tooltip.tsx. For Pro components and updates, use pnpm dlx wensity@latest add tooltip.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "tooltip",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/tooltip",
+      "shadcnUrl": "https://ui.wensity.com/r/tooltip",
+      "cliInstall": "pnpm dlx wensity@latest add tooltip"
+    }
+  }
+}

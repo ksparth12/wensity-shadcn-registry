@@ -1,0 +1,144 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pagination",
+  "type": "registry:block",
+  "title": "Pagination",
+  "description": "Page navigation for lists, counters, jumps, and progressive loading.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@tabler/icons-react",
+    "clsx",
+    "framer-motion",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/pagination.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/pagination.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion, LayoutGroup } from \"framer-motion\";\nimport {\n  IconChevronLeft,\n  IconChevronRight,\n  IconChevronsLeft,\n  IconChevronsRight,\n  IconLoader2,\n} from \"@tabler/icons-react\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport type PaginationVariant =\n  | \"default\"\n  | \"compact\"\n  | \"with-first-last\"\n  | \"load-more\";\n\nexport type PaginationSize = \"sm\" | \"md\";\n\nexport interface PaginationProps\n  extends Omit<React.HTMLAttributes<HTMLElement>, \"onChange\"> {\n  variant?: PaginationVariant;\n  size?: PaginationSize;\n  /** Current page (1-indexed). */\n  page: number;\n  /** Total number of pages. */\n  totalPages: number;\n  /** Called when the active page changes. */\n  onPageChange: (page: number) => void;\n  /** Pages shown around the current page (default 1). */\n  siblingCount?: number;\n  /** Whether a load/fetch operation is in progress (load-more). */\n  isLoading?: boolean;\n  /** Whether there are more items to load (load-more). */\n  hasMore?: boolean;\n  /** Callback to load more items (load-more). */\n  onLoadMore?: () => void;\n  /** Number of items currently loaded (load-more display). */\n  loadedCount?: number;\n  /** Total number of items (load-more display). */\n  totalCount?: number;\n}\n\nconst indicatorSpring = {\n  type: \"spring\" as const,\n  duration: 0.32,\n  bounce: 0.12,\n};\n\n/* ─── Size maps ─────────────────────────────────────────────── */\n\nconst pageButtonSizes: Record<PaginationSize, string> = {\n  sm: \"size-7 text-xs\",\n  md: \"size-8 text-sm\",\n};\n\nconst navButtonSizes: Record<PaginationSize, string> = {\n  sm: \"h-7 px-1.5 text-xs [&_svg]:size-3.5\",\n  md: \"h-8 px-2 text-sm [&_svg]:size-4\",\n};\n\n/* ─── Shared styles ─────────────────────────────────────────── */\n\nconst navButtonBase = cn(\n  \"relative isolate inline-flex shrink-0 items-center justify-center rounded-lg\",\n  \"font-medium leading-none select-none touch-manipulation outline-none\",\n  \"transition-[color,background-color] duration-[150ms] ease-[cubic-bezier(0.23,1,0.32,1)]\",\n  \"text-[var(--muted-foreground)]\",\n  \"hover:text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--foreground)_6%,var(--background))]\",\n  \"focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]\",\n  \"disabled:pointer-events-none disabled:opacity-35\",\n  \"[&_svg]:pointer-events-none [&_svg]:shrink-0\",\n);\n\nconst pageButtonBase = cn(\n  navButtonBase,\n  \"rounded-lg tabular-nums\",\n);\n\n/* ─── Page range calculator ─────────────────────────────────── */\n\nfunction getPageRange(\n  page: number,\n  totalPages: number,\n  siblingCount: number,\n): (number | \"ellipsis-start\" | \"ellipsis-end\")[] {\n  const totalSlots = siblingCount * 2 + 5; // siblings + first + last + 2 ellipses + current\n\n  if (totalPages <= totalSlots) {\n    return Array.from({ length: totalPages }, (_, i) => i + 1);\n  }\n\n  const leftSiblingIndex = Math.max(page - siblingCount, 1);\n  const rightSiblingIndex = Math.min(page + siblingCount, totalPages);\n\n  const showLeftEllipsis = leftSiblingIndex > 2;\n  const showRightEllipsis = rightSiblingIndex < totalPages - 1;\n\n  const items: (number | \"ellipsis-start\" | \"ellipsis-end\")[] = [];\n\n  // Always show first page\n  items.push(1);\n\n  if (showLeftEllipsis) {\n    items.push(\"ellipsis-start\");\n  } else {\n    // Show pages 2 through leftSiblingIndex - 1\n    for (let i = 2; i < leftSiblingIndex; i++) items.push(i);\n  }\n\n  // Show siblings + current\n  for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {\n    if (i !== 1 && i !== totalPages) items.push(i);\n  }\n\n  if (showRightEllipsis) {\n    items.push(\"ellipsis-end\");\n  } else {\n    for (let i = rightSiblingIndex + 1; i < totalPages; i++) items.push(i);\n  }\n\n  // Always show last page\n  if (totalPages > 1) items.push(totalPages);\n\n  return items;\n}\n\n/* ─── <Pagination> ──────────────────────────────────────────── */\n\nexport const Pagination = React.forwardRef<HTMLElement, PaginationProps>(\n  (\n    {\n      variant = \"default\",\n      size = \"md\",\n      page,\n      totalPages,\n      onPageChange,\n      siblingCount = 1,\n      isLoading = false,\n      hasMore = true,\n      onLoadMore,\n      loadedCount,\n      totalCount,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const layoutId = React.useId();\n\n    /* ── Load More variant ─────────────────── */\n    if (variant === \"load-more\") {\n      return (\n        <nav\n          ref={ref}\n          aria-label=\"Pagination\"\n          className={cn(\"flex flex-col items-center gap-3\", className)}\n          {...props}\n        >\n          {loadedCount != null && totalCount != null && (\n            <p className=\"text-xs font-medium text-[var(--muted-foreground)] tabular-nums\">\n              Showing {loadedCount} of {totalCount}\n            </p>\n          )}\n          {hasMore && (\n            <button\n              type=\"button\"\n              disabled={isLoading}\n              onClick={() => onLoadMore?.()}\n              className={cn(\n                \"relative h-9 min-w-[140px] overflow-hidden rounded-xl px-4\",\n                \"text-sm font-medium leading-none\",\n                \"border border-[color-mix(in_srgb,var(--foreground)_12%,transparent)]\",\n                \"bg-[var(--background)] text-[var(--foreground)]\",\n                \"transition-[border-color,background-color] duration-[180ms] ease-[cubic-bezier(0.23,1,0.32,1)]\",\n                \"hover:border-[color-mix(in_srgb,var(--foreground)_20%,transparent)]\",\n                \"hover:bg-[color-mix(in_srgb,var(--foreground)_4%,var(--background))]\",\n                \"focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]\",\n                \"dark:border-white/[0.10] dark:hover:border-white/[0.16]\",\n                \"disabled:opacity-60 disabled:pointer-events-none\",\n                \"outline-none select-none\",\n              )}\n            >\n\n              <span className=\"relative inline-flex items-center gap-2\">\n                {isLoading && (\n                  <IconLoader2 className=\"size-3.5 animate-spin\" />\n                )}\n                {isLoading ? \"Loading…\" : \"Load more\"}\n              </span>\n            </button>\n          )}\n        </nav>\n      );\n    }\n\n    /* ── Compact variant ───────────────────── */\n    if (variant === \"compact\") {\n      return (\n        <nav\n          ref={ref}\n          aria-label=\"Pagination\"\n          className={cn(\"flex items-center gap-2\", className)}\n          {...props}\n        >\n          <NavArrow\n            direction=\"prev\"\n            disabled={page <= 1}\n            onClick={() => onPageChange(page - 1)}\n            size={size}\n          />\n          <span className=\"text-sm font-medium tabular-nums text-[var(--muted-foreground)] select-none px-1\">\n            <span className=\"text-[var(--foreground)]\">{page}</span>\n            <span className=\"mx-1 opacity-40\">/</span>\n            {totalPages}\n          </span>\n          <NavArrow\n            direction=\"next\"\n            disabled={page >= totalPages}\n            onClick={() => onPageChange(page + 1)}\n            size={size}\n          />\n        </nav>\n      );\n    }\n\n    /* ── Default & With First/Last ─────────── */\n    const showFirstLast = variant === \"with-first-last\";\n    const pages = getPageRange(page, totalPages, siblingCount);\n\n    return (\n      <nav\n        ref={ref}\n        aria-label=\"Pagination\"\n        className={cn(\n          \"inline-flex items-center justify-between gap-4 w-full max-w-[360px]\",\n          \"p-1 rounded-xl\",\n          \"bg-[color-mix(in_srgb,var(--foreground)_3%,var(--background))]\",\n          \"border border-[color-mix(in_srgb,var(--foreground)_6%,transparent)]\",\n          \"dark:bg-[#0c0c0e] dark:border-white/[0.04]\",\n          className\n        )}\n        {...props}\n      >\n        <div className=\"flex items-center gap-1 shrink-0\">\n          {showFirstLast && (\n            <NavArrow\n              direction=\"first\"\n              disabled={page <= 1}\n              onClick={() => onPageChange(1)}\n              size={size}\n            />\n          )}\n          <NavArrow\n            direction=\"prev\"\n            disabled={page <= 1}\n            onClick={() => onPageChange(page - 1)}\n            size={size}\n          />\n        </div>\n\n        <LayoutGroup id={layoutId}>\n          <div className=\"flex items-center justify-center gap-0.5 flex-1 min-w-0 mx-1\">\n            {pages.map((item, i) => {\n              if (item === \"ellipsis-start\" || item === \"ellipsis-end\") {\n                return (\n                  <span\n                    key={item}\n                    className={cn(\n                      \"inline-flex items-center justify-center text-[var(--muted-foreground)] opacity-50 select-none\",\n                      pageButtonSizes[size],\n                    )}\n                  >\n                    ⋯\n                  </span>\n                );\n              }\n              const isActive = item === page;\n              return (\n                <button\n                  key={item}\n                  type=\"button\"\n                  aria-label={`Page ${item}`}\n                  aria-current={isActive ? \"page\" : undefined}\n                  onClick={() => onPageChange(item)}\n                  className={cn(\n                    pageButtonBase,\n                    pageButtonSizes[size],\n                    isActive\n                      ? \"text-[var(--foreground)]\"\n                      : \"text-[var(--muted-foreground)]\",\n                  )}\n                >\n                  {/* Active page indicator */}\n                  {isActive && (\n                    <motion.span\n                      layoutId={`page-active-${layoutId}`}\n                      className={cn(\n                        \"absolute inset-0 rounded-lg\",\n                        \"bg-[color-mix(in_srgb,var(--foreground)_9%,var(--background))]\",\n                        \"border border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n                        \"dark:bg-[color-mix(in_srgb,var(--foreground)_14%,var(--background))]\",\n                        \"dark:border-white/[0.08]\",\n                      )}\n                      transition={indicatorSpring}\n                      style={{ zIndex: -1 }}\n                    />\n                  )}\n                  <span className=\"relative z-[1]\">{item}</span>\n                </button>\n              );\n            })}\n          </div>\n        </LayoutGroup>\n\n        <div className=\"flex items-center gap-1 shrink-0\">\n          <NavArrow\n            direction=\"next\"\n            disabled={page >= totalPages}\n            onClick={() => onPageChange(page + 1)}\n            size={size}\n          />\n          {showFirstLast && (\n            <NavArrow\n              direction=\"last\"\n              disabled={page >= totalPages}\n              onClick={() => onPageChange(totalPages)}\n              size={size}\n            />\n          )}\n        </div>\n      </nav>\n    );\n  },\n);\nPagination.displayName = \"Pagination\";\n\n/* ─── Nav arrow button ──────────────────────────────────────── */\n\nfunction NavArrow({\n  direction,\n  disabled,\n  onClick,\n  size,\n}: {\n  direction: \"first\" | \"prev\" | \"next\" | \"last\";\n  disabled: boolean;\n  onClick: () => void;\n  size: PaginationSize;\n}) {\n  const labels: Record<string, string> = {\n    first: \"First page\",\n    prev: \"Previous page\",\n    next: \"Next page\",\n    last: \"Last page\",\n  };\n\n  const icons: Record<string, React.ReactNode> = {\n    first: <IconChevronsLeft />,\n    prev: <IconChevronLeft />,\n    next: <IconChevronRight />,\n    last: <IconChevronsRight />,\n  };\n\n  const isForward = direction === \"next\" || direction === \"last\";\n\n    return (\n      <button\n        type=\"button\"\n        aria-label={labels[direction]}\n        disabled={disabled}\n        onClick={onClick}\n        className={cn(\n          navButtonBase,\n          navButtonSizes[size],\n          \"group/nav\",\n        )}\n      >\n        <span\n          className={cn(\n            \"inline-flex transition-transform duration-[180ms] ease-[cubic-bezier(0.23,1,0.32,1)]\",\n            !disabled && (isForward ? \"group-hover/nav:translate-x-0.5\" : \"group-hover/nav:-translate-x-0.5\")\n          )}\n        >\n          {icons[direction]}\n        </span>\n      </button>\n    );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/pagination.tsx. For Pro components and updates, use pnpm dlx wensity@latest add pagination.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "pagination",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/pagination",
+      "shadcnUrl": "https://ui.wensity.com/r/pagination",
+      "cliInstall": "pnpm dlx wensity@latest add pagination"
+    }
+  }
+}

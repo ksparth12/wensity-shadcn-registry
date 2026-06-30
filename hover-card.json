@@ -1,0 +1,144 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hover-card",
+  "type": "registry:block",
+  "title": "Hover Card",
+  "description": "Hover preview cards for profiles, dashboards, and rich links.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@radix-ui/react-hover-card",
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/hover-card.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/hover-card.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as HoverCardPrimitive from \"@radix-ui/react-hover-card\";\nimport { cn } from \"@/lib/utils\";\n\nexport const HoverCard = HoverCardPrimitive.Root;\nexport const HoverCardTrigger = HoverCardPrimitive.Trigger;\nexport const HoverCardPortal = HoverCardPrimitive.Portal;\n\nexport interface HoverCardContentProps\n  extends React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content> {\n  width?: \"auto\" | \"sm\" | \"md\" | \"lg\";\n}\n\nconst widthClasses: Record<NonNullable<HoverCardContentProps[\"width\"]>, string> = {\n  auto: \"w-auto min-w-[12rem]\",\n  sm: \"w-[14rem]\",\n  md: \"w-[18rem]\",\n  lg: \"w-[22rem]\",\n};\n\nconst hoverCardSurfaceClass =\n  \"border border-[#ded3c5] bg-[#f7f2e9] text-[#181716] \" +\n  \"[box-shadow:0_26px_72px_-34px_rgba(0,0,0,.78),0_12px_34px_-20px_rgba(18,16,13,.46),0_1px_2px_rgba(18,16,13,.10)]\";\n\nconst hoverCardTokenClass =\n  \"[--background:#fffaf2] [--foreground:#181716] [--muted-foreground:#655d52] [--border:#d8cab8] [--surface:#fffaf2]\";\n\nexport function HoverCardContent({\n  className,\n  width = \"auto\",\n  align = \"center\",\n  sideOffset = 6,\n  collisionPadding = 12,\n  ...props\n}: HoverCardContentProps) {\n  return (\n    <HoverCardPrimitive.Portal>\n      <HoverCardPrimitive.Content\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={collisionPadding}\n        className={cn(\n          \"z-[120] origin-[var(--radix-hover-card-content-transform-origin)] transform-gpu outline-none\",\n          hoverCardSurfaceClass,\n          hoverCardTokenClass,\n          \"rounded-[18px] p-4\",\n          \"data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95\",\n          \"data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2\",\n          \"data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2\",\n          \"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95\",\n          \"data-[state=open]:duration-180 data-[state=closed]:duration-120\",\n          \"data-[state=open]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[state=closed]:ease-[cubic-bezier(0.23,1,0.32,1)]\",\n          \"motion-reduce:animate-none\",\n          widthClasses[width],\n          className,\n        )}\n        {...props}\n      />\n    </HoverCardPrimitive.Portal>\n  );\n}\n\nexport function HoverCardHeader({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div\n      className={cn(\n        \"border-b border-[#e4dbcf] pb-3 mb-3\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function HoverCardBody({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn(\"\", className)} {...props} />;\n}\n\nexport function HoverCardFooter({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div\n      className={cn(\n        \"border-t border-[#e4dbcf] pt-3 mt-3 flex items-center justify-end gap-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function HoverCardTitle({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLParagraphElement>) {\n  return (\n    <p\n      className={cn(\n        \"text-sm font-semibold tracking-[-0.01em] text-[#181716]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function HoverCardDescription({\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLParagraphElement>) {\n  return (\n    <p\n      className={cn(\n        \"mt-1 text-[12px] leading-[1.5] text-[#655d52]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/hover-card.tsx. For Pro components and updates, use pnpm dlx wensity@latest add hover-card.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "hover-card",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/hover-card",
+      "shadcnUrl": "https://ui.wensity.com/r/hover-card",
+      "cliInstall": "pnpm dlx wensity@latest add hover-card"
+    }
+  }
+}

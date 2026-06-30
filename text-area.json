@@ -1,26 +1,27 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "textarea",
+  "name": "text-area",
   "type": "registry:block",
-  "title": "Textarea",
-  "description": "A polished multi-line form primitive for product interfaces. It handles labels, helper text, error messaging, character counts, auto-resize, disabled and read-only states, and default, filled, and ghost visual variants from one installable component.",
-  "author": "Wensity <hello@wensity.com>",
+  "title": "Text Area",
+  "description": "A flexible writing field for notes, prompts, and support flows.",
+  "author": "Wensity <hey@wensity.com>",
   "dependencies": [
     "@tabler/icons-react",
     "clsx",
     "tailwind-merge"
   ],
+  "registryDependencies": [],
   "files": [
     {
       "path": "registry/wensity/lib/utils.ts",
       "type": "registry:lib",
       "target": "@lib/utils.ts",
-      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
     },
     {
-      "path": "packages/ui/src/components/library/ui-primitives/Textarea.tsx",
+      "path": "registry/wensity/text-area.tsx",
       "type": "registry:component",
-      "target": "@components/wensity/textarea.tsx",
+      "target": "@components/wensity/text-area.tsx",
       "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { IconFileText } from \"@tabler/icons-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type TextareaSize = \"sm\" | \"md\" | \"lg\";\nexport type TextareaVariant = \"default\" | \"filled\" | \"ghost\";\nexport type TextareaResize = \"none\" | \"vertical\" | \"both\";\n\nexport interface TextareaProps\n  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, \"size\"> {\n  label?: React.ReactNode;\n  hint?: React.ReactNode;\n  error?: React.ReactNode;\n  textareaSize?: TextareaSize;\n  variant?: TextareaVariant;\n  resize?: TextareaResize;\n  autoResize?: boolean;\n  minRows?: number;\n  maxRows?: number;\n  showCount?: boolean;\n  fullWidth?: boolean;\n  containerClassName?: string;\n  textareaClassName?: string;\n}\n\nconst textareaSizes: Record<TextareaSize, string> = {\n  sm: \"min-h-[5.5rem] rounded-xl px-4 py-3 text-xs leading-5\",\n  md: \"min-h-[7.5rem] rounded-xl px-4 py-4 text-sm leading-6\",\n  lg: \"min-h-[9.5rem] rounded-2xl px-5 py-4 text-[15px] leading-6\",\n};\n\nconst countPadding: Record<TextareaSize, string> = {\n  sm: \"pb-9\",\n  md: \"pb-10\",\n  lg: \"pb-11\",\n};\n\nconst resizeClasses: Record<TextareaResize, string> = {\n  none: \"resize-none\",\n  vertical: \"resize-y\",\n  both: \"resize\",\n};\n\nconst variantClasses: Record<TextareaVariant, string> = {\n  default: cn(\n    \"border-[var(--border)] bg-[var(--background)]\",\n    \"hover:border-[color-mix(in_srgb,var(--foreground)_14%,transparent)]\",\n  ),\n  filled: cn(\n    \"border-[var(--border)]\",\n    \"bg-[color-mix(in_srgb,var(--foreground)_3%,var(--background))]\",\n    \"hover:border-[color-mix(in_srgb,var(--foreground)_14%,transparent)]\",\n  ),\n  ghost: cn(\n    \"border-transparent bg-transparent\",\n    \"hover:border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n    \"hover:bg-[color-mix(in_srgb,var(--foreground)_2.5%,transparent)]\",\n  ),\n};\n\nconst focusClasses = cn(\n  \"focus:border-[color-mix(in_srgb,var(--foreground)_24%,transparent)]\",\n);\n\nconst errorClasses = cn(\n  \"border-red-500/45\",\n  \"hover:border-red-500/55\",\n  \"focus:border-red-500/65\",\n);\n\nconst disabledClasses = cn(\n  \"cursor-not-allowed opacity-45\",\n  \"hover:border-[var(--border)]\",\n);\n\nconst readOnlyClasses = cn(\n  \"border-[var(--border)] bg-[color-mix(in_srgb,var(--foreground)_2.5%,var(--background))]\",\n  \"text-[var(--muted-foreground)]\",\n  \"hover:border-[var(--border)]\",\n);\n\nfunction rowsToHeight(rows: number) {\n  return `${Math.max(rows, 1) * 24 + 32}px`;\n}\n\nexport const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(\n  (\n    {\n      id,\n      className,\n      containerClassName,\n      textareaClassName,\n      label,\n      hint,\n      error,\n      textareaSize = \"md\",\n      variant = \"default\",\n      resize = \"vertical\",\n      autoResize = false,\n      minRows = textareaSize === \"sm\" ? 3 : textareaSize === \"lg\" ? 5 : 4,\n      maxRows,\n      showCount = false,\n      fullWidth = true,\n      disabled,\n      readOnly,\n      value,\n      defaultValue,\n      maxLength,\n      onChange,\n      \"aria-describedby\": ariaDescribedBy,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const reactId = React.useId();\n    const textareaId = id ?? `wensity-textarea-${reactId}`;\n    const hintId = hint ? `${textareaId}-hint` : undefined;\n    const errorId = error ? `${textareaId}-error` : undefined;\n    const countId = showCount ? `${textareaId}-count` : undefined;\n    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);\n    const isControlled = value !== undefined;\n    const [uncontrolledValue, setUncontrolledValue] = React.useState(\n      defaultValue?.toString() ?? \"\",\n    );\n    const currentValue = isControlled ? value : uncontrolledValue;\n    const currentLength = currentValue == null ? 0 : String(currentValue).length;\n    const describedBy =\n      [ariaDescribedBy, errorId, hintId, countId].filter(Boolean).join(\" \") ||\n      undefined;\n\n    const setRefs = React.useCallback(\n      (node: HTMLTextAreaElement | null) => {\n        textareaRef.current = node;\n        if (typeof ref === \"function\") {\n          ref(node);\n        } else if (ref) {\n          ref.current = node;\n        }\n      },\n      [ref],\n    );\n\n    const syncHeight = React.useCallback(() => {\n      const node = textareaRef.current;\n      if (!node || !autoResize) return;\n\n      node.style.height = \"auto\";\n      const maxHeight = maxRows ? Number.parseFloat(rowsToHeight(maxRows)) : Infinity;\n      node.style.height = `${Math.min(node.scrollHeight, maxHeight)}px`;\n      node.style.overflowY = node.scrollHeight > maxHeight ? \"auto\" : \"hidden\";\n    }, [autoResize, maxRows]);\n\n    const handleChange = React.useCallback(\n      (event: React.ChangeEvent<HTMLTextAreaElement>) => {\n        if (!isControlled) setUncontrolledValue(event.target.value);\n        onChange?.(event);\n        window.requestAnimationFrame(syncHeight);\n      },\n      [isControlled, onChange, syncHeight],\n    );\n\n    React.useLayoutEffect(() => {\n      syncHeight();\n    }, [currentValue, syncHeight]);\n\n    return (\n      <div\n        className={cn(\n          \"flex flex-col gap-2.5\",\n          fullWidth ? \"w-full\" : \"w-fit\",\n          containerClassName,\n        )}\n      >\n        {label ? (\n          <label\n            htmlFor={textareaId}\n            className=\"text-sm font-semibold leading-none tracking-[-0.01em] text-[var(--foreground)]\"\n          >\n            {label}\n          </label>\n        ) : null}\n\n        <div className={cn(\"relative\", fullWidth ? \"w-full\" : \"w-fit\", className)}>\n          <textarea\n            ref={setRefs}\n            id={textareaId}\n            value={isControlled ? value : uncontrolledValue}\n            disabled={disabled}\n            readOnly={readOnly}\n            maxLength={maxLength}\n            rows={autoResize ? minRows : props.rows ?? minRows}\n            aria-invalid={error ? true : undefined}\n            aria-describedby={describedBy}\n            onChange={handleChange}\n            data-wensity-textarea=\"\"\n            data-error={error ? \"\" : undefined}\n            data-readonly={readOnly ? \"\" : undefined}\n            data-disabled={disabled ? \"\" : undefined}\n            className={cn(\n              \"wensity-textarea-control w-full border outline-none\",\n              \"text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/60\",\n              \"transition-[border-color] duration-150 ease-out\",\n              \"disabled:cursor-not-allowed\",\n              textareaSizes[textareaSize],\n              showCount && countPadding[textareaSize],\n              !autoResize && resizeClasses[resize],\n              autoResize && \"resize-none overflow-hidden\",\n              variantClasses[variant],\n              !disabled && !readOnly && !error && focusClasses,\n              error && errorClasses,\n              disabled && disabledClasses,\n              readOnly && readOnlyClasses,\n              textareaClassName,\n            )}\n            style={{\n              minHeight: rowsToHeight(minRows),\n              maxHeight: maxRows ? rowsToHeight(maxRows) : undefined,\n              ...style,\n            }}\n            {...props}\n          />\n\n          {showCount ? (\n            <div\n              id={countId}\n              aria-live=\"polite\"\n              className={cn(\n                \"pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5\",\n                \"text-[11px] leading-none tabular-nums text-[var(--muted-foreground)]/70\",\n                maxLength && currentLength > maxLength * 0.9 && \"text-amber-600/90 dark:text-amber-400/90\",\n                maxLength && currentLength >= maxLength && \"text-red-600 dark:text-red-400\",\n              )}\n            >\n              <IconFileText\n                aria-hidden=\"true\"\n                className=\"size-3.5 opacity-70\"\n                stroke={1.75}\n              />\n              <span>\n                {currentLength}\n                {maxLength ? `/${maxLength}` : null}\n              </span>\n            </div>\n          ) : null}\n        </div>\n\n        {error ? (\n          <p\n            id={errorId}\n            className=\"text-[12px] leading-5 text-red-600 dark:text-red-400\"\n          >\n            {error}\n          </p>\n        ) : hint ? (\n          <p\n            id={hintId}\n            className=\"text-[12px] leading-5 text-[var(--muted-foreground)]/80\"\n          >\n            {hint}\n          </p>\n        ) : null}\n      </div>\n    );\n  },\n);\n\nTextarea.displayName = \"Textarea\";\n"
     }
   ],
@@ -123,7 +124,7 @@
       }
     }
   },
-  "docs": "Free Wensity component. Installs to @components/wensity/textarea.tsx. For Pro components and updates, use pnpm dlx wensity@latest add textarea.",
+  "docs": "Free Wensity component. Installs to @components/wensity/text-area.tsx. For Pro components and updates, use pnpm dlx wensity@latest add text-area.",
   "categories": [
     "UI Primitives",
     "wensity",
@@ -131,12 +132,12 @@
   ],
   "meta": {
     "wensity": {
-      "slug": "textarea",
+      "slug": "text-area",
       "access": "free",
       "category": "UI Primitives",
-      "componentUrl": "https://ui.wensity.com/components/textarea",
-      "shadcnUrl": "https://ui.wensity.com/r/textarea",
-      "cliInstall": "pnpm dlx wensity@latest add textarea"
+      "componentUrl": "https://ui.wensity.com/primitives/text-area",
+      "shadcnUrl": "https://ui.wensity.com/r/text-area",
+      "cliInstall": "pnpm dlx wensity@latest add text-area"
     }
   }
 }

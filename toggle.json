@@ -1,0 +1,143 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toggle",
+  "type": "registry:block",
+  "title": "Toggle",
+  "description": "A toggle button for toolbars, filters, and grouped controls.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/toggle.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/toggle.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nconst wensityCardSurfaceClass = cn(\n  \"relative isolate overflow-hidden rounded-2xl\",\n  \"border border-black/[0.08] bg-[radial-gradient(ellipse_90%_70%_at_50%_-10%,#ffffff_0%,#f4f4f5_72%)] [box-shadow:0_1px_2px_rgba(0,0,0,.06),0_8px_24px_-12px_rgba(0,0,0,.08)]\",\n  \"dark:border-white/[0.06] dark:bg-[radial-gradient(ellipse_90%_70%_at_50%_-10%,#15151b_0%,#0a0a0b_72%)] dark:[box-shadow:0_1px_2px_rgba(0,0,0,.4),0_8px_24px_-12px_rgba(0,0,0,.6)]\",\n);\n\nexport type ToggleVariant = \"default\" | \"icon\" | \"outline\" | \"soft\";\nexport type ToggleSize = \"sm\" | \"md\" | \"lg\";\n\nexport interface ToggleProps\n  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, \"onChange\"> {\n  variant?: ToggleVariant;\n  size?: ToggleSize;\n  pressed?: boolean;\n  defaultPressed?: boolean;\n  onPressedChange?: (pressed: boolean) => void;\n}\n\nexport interface ToggleGroupProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"defaultValue\" | \"onChange\"> {\n  type?: \"single\" | \"multiple\";\n  value?: string | string[];\n  defaultValue?: string | string[];\n  onValueChange?: (value: string | string[]) => void;\n  variant?: ToggleVariant;\n  size?: ToggleSize;\n  orientation?: \"horizontal\" | \"vertical\";\n  disabled?: boolean;\n  children: React.ReactNode;\n}\n\nexport interface ToggleGroupItemProps\n  extends Omit<ToggleProps, \"pressed\" | \"defaultPressed\" | \"onPressedChange\"> {\n  value: string;\n}\n\ntype ToggleGroupContextValue = {\n  type: \"single\" | \"multiple\";\n  value: string | string[] | undefined;\n  setValue: (itemValue: string) => void;\n  variant: ToggleVariant;\n  size: ToggleSize;\n  disabled?: boolean;\n  segmented: boolean;\n};\n\nconst ToggleGroupContext = React.createContext<ToggleGroupContextValue | null>(\n  null,\n);\n\nconst EASE_OUT_CSS = \"cubic-bezier(0.23, 1, 0.32, 1)\";\nconst EASE_DRAWER_CSS = \"cubic-bezier(0.32, 0.72, 0, 1)\";\nconst TOGGLE_STYLE_ID = \"wensity-toggle-styles-v1\";\n\nconst base = cn(\n  \"relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[10px] border border-transparent\",\n  \"text-sm font-medium leading-none tracking-[-0.01em] select-none touch-manipulation\",\n  \"transition-[background-color,border-color,color,opacity,box-shadow] duration-[180ms] ease-[cubic-bezier(0.23,1,0.32,1)]\",\n  \"motion-reduce:transition-[background-color,border-color,color,opacity,box-shadow]\",\n  \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]\",\n  \"disabled:pointer-events-none disabled:opacity-45\",\n  \"[&_svg]:pointer-events-none [&_svg]:shrink-0\",\n);\n\nconst sizes: Record<ToggleSize, string> = {\n  sm: \"h-8 gap-1.5 px-3 text-xs [&_svg]:size-3.5\",\n  md: \"h-9 gap-2 px-3.5 [&_svg]:size-4\",\n  lg: \"h-10 gap-2 px-4 text-[15px] [&_svg]:size-[18px]\",\n};\n\nconst iconSizes: Record<ToggleSize, string> = {\n  sm: \"size-8 gap-0 p-0 [&_svg]:size-3.5\",\n  md: \"size-9 gap-0 p-0 [&_svg]:size-4\",\n  lg: \"size-10 gap-0 p-0 [&_svg]:size-[18px]\",\n};\n\nconst offDefault = cn(\n  \"border border-transparent bg-transparent text-[var(--muted-foreground)]\",\n  \"hover:border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n  \"hover:bg-[color-mix(in_srgb,var(--foreground)_4%,var(--background))]\",\n  \"hover:text-[var(--foreground)]\",\n  \"dark:hover:border-white/10 dark:hover:bg-white/[0.06] dark:hover:text-[#f5f6f2]\",\n);\n\nconst onDefault = cn(\n  \"border border-[#31383d] bg-[#24292d] text-white\",\n  \"shadow-[0_1px_2px_rgba(0,0,0,0.10)]\",\n  \"dark:border-white/18 dark:bg-[#f5f3ee] dark:text-[#151719]\",\n  \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.32)]\",\n);\n\nconst offOutline = cn(\n  \"border border-[var(--border-strong)] bg-transparent text-[var(--muted-foreground)]\",\n  \"hover:border-[color-mix(in_srgb,var(--foreground)_16%,transparent)]\",\n  \"hover:bg-[color-mix(in_srgb,var(--foreground)_4%,var(--background))]\",\n  \"hover:text-[var(--foreground)]\",\n  \"dark:hover:border-white/14 dark:hover:bg-white/[0.05]\",\n);\n\nconst onOutline = cn(\n  \"border-[color-mix(in_srgb,var(--foreground)_22%,transparent)]\",\n  \"bg-[color-mix(in_srgb,var(--foreground)_6%,var(--background))]\",\n  \"text-[var(--foreground)]\",\n  \"shadow-[0_1px_2px_rgba(0,0,0,0.05)]\",\n  \"dark:border-white/16 dark:bg-[color-mix(in_srgb,var(--foreground)_12%,var(--background))]\",\n  \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.28)]\",\n);\n\nconst offSoft = cn(\n  \"border border-transparent\",\n  \"bg-[color-mix(in_srgb,var(--foreground)_5%,var(--background))]\",\n  \"text-[var(--muted-foreground)]\",\n  \"hover:bg-[color-mix(in_srgb,var(--foreground)_8%,var(--background))]\",\n  \"hover:text-[var(--foreground)]\",\n  \"dark:bg-[color-mix(in_srgb,var(--foreground)_8%,var(--background))]\",\n  \"dark:hover:bg-[color-mix(in_srgb,var(--foreground)_12%,var(--background))]\",\n);\n\nconst onSoft = cn(\n  \"border border-[color-mix(in_srgb,var(--foreground)_12%,transparent)]\",\n  \"bg-[color-mix(in_srgb,var(--foreground)_11%,var(--background))]\",\n  \"text-[var(--foreground)]\",\n  \"shadow-[0_1px_2px_rgba(0,0,0,0.05)]\",\n  \"dark:border-white/12 dark:bg-[color-mix(in_srgb,var(--foreground)_18%,var(--background))]\",\n  \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.30)]\",\n);\n\nconst variantOff: Record<ToggleVariant, string> = {\n  default: offDefault,\n  icon: offDefault,\n  outline: offOutline,\n  soft: offSoft,\n};\n\nconst variantOn: Record<ToggleVariant, string> = {\n  default: onDefault,\n  icon: onDefault,\n  outline: onOutline,\n  soft: onSoft,\n};\n\nconst groupItemBase = cn(\n  \"relative z-[1] rounded-lg\",\n  \"data-[segmented=true]:border-transparent data-[segmented=true]:bg-transparent\",\n  \"data-[segmented=true]:shadow-none\",\n  \"data-[segmented=true]:hover:border-transparent\",\n  \"data-[segmented=true][data-state=on]:border-transparent\",\n  \"data-[segmented=true][data-state=on]:bg-transparent\",\n  \"data-[segmented=true][data-state=on]:text-[var(--foreground)]\",\n  \"data-[segmented=true][data-state=on]:shadow-none\",\n);\n\nfunction ensureToggleStyles() {\n  if (typeof document === \"undefined\") return;\n  if (document.getElementById(TOGGLE_STYLE_ID)) return;\n\n  const style = document.createElement(\"style\");\n  style.id = TOGGLE_STYLE_ID;\n  style.textContent = `\n    [data-slot=\"toggle-segment-indicator\"] {\n      transform: translate3d(0, 0, 0);\n      transition: transform 260ms ${EASE_DRAWER_CSS};\n    }\n\n    [data-slot=\"toggle-segment-indicator\"][data-orientation=\"vertical\"] {\n      transition-duration: 240ms;\n    }\n\n    [data-slot=\"toggle-group-item\"][data-segmented=\"true\"] {\n      transition: color 200ms ${EASE_OUT_CSS};\n    }\n\n    @media (prefers-reduced-motion: reduce) {\n      [data-slot=\"toggle-segment-indicator\"],\n      [data-slot=\"toggle-group-item\"][data-segmented=\"true\"] {\n        transition-duration: 0ms !important;\n      }\n    }\n  `;\n  document.head.appendChild(style);\n}\n\nfunction resolveSizeClasses(variant: ToggleVariant, size: ToggleSize) {\n  return variant === \"icon\" ? iconSizes[size] : sizes[size];\n}\n\nexport function toggleVariants({\n  variant = \"default\",\n  size = \"md\",\n  pressed = false,\n  segmented = false,\n  className,\n}: {\n  variant?: ToggleVariant;\n  size?: ToggleSize;\n  pressed?: boolean;\n  segmented?: boolean;\n  className?: string;\n} = {}) {\n  return cn(\n    base,\n    resolveSizeClasses(variant, size),\n    segmented ? null : pressed ? variantOn[variant] : variantOff[variant],\n    segmented && \"text-[var(--muted-foreground)] hover:text-[var(--foreground)]\",\n    segmented && pressed && \"text-[var(--foreground)]\",\n    className,\n  );\n}\n\nfunction getSegmentIndex(children: React.ReactNode, selectedValue?: string) {\n  const values = React.Children.toArray(children)\n    .map((child) => {\n      if (!React.isValidElement(child)) return undefined;\n      const props = child.props as { value?: string };\n      return typeof props.value === \"string\" ? props.value : undefined;\n    })\n    .filter((value): value is string => value !== undefined);\n\n  const selectedIndex = values.findIndex((value) => value === selectedValue);\n  return {\n    count: values.length,\n    index: selectedIndex >= 0 ? selectedIndex : 0,\n  };\n}\n\nfunction useToggleGroupContext(component: string) {\n  const context = React.useContext(ToggleGroupContext);\n  if (!context) {\n    throw new Error(`${component} must be used inside ToggleGroup.`);\n  }\n  return context;\n}\n\nfunction isItemPressed(\n  type: \"single\" | \"multiple\",\n  value: string | string[] | undefined,\n  itemValue: string,\n) {\n  if (type === \"multiple\") {\n    return Array.isArray(value) && value.includes(itemValue);\n  }\n  return value === itemValue;\n}\n\nexport const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(\n  (\n    {\n      className,\n      variant = \"default\",\n      size = \"md\",\n      pressed,\n      defaultPressed = false,\n      disabled,\n      onPressedChange,\n      onClick,\n      type = \"button\",\n      ...props\n    },\n    ref,\n  ) => {\n    const isControlled = pressed !== undefined;\n    const [uncontrolledPressed, setUncontrolledPressed] =\n      React.useState(defaultPressed);\n    const isPressed = isControlled ? pressed : uncontrolledPressed;\n\n    const handleClick = React.useCallback(\n      (event: React.MouseEvent<HTMLButtonElement>) => {\n        const nextPressed = !isPressed;\n        if (!isControlled) setUncontrolledPressed(nextPressed);\n        onPressedChange?.(nextPressed);\n        onClick?.(event);\n      },\n      [isControlled, isPressed, onClick, onPressedChange],\n    );\n\n    return (\n      <button\n        ref={ref}\n        type={type}\n        aria-pressed={isPressed}\n        data-slot=\"toggle\"\n        data-state={isPressed ? \"on\" : \"off\"}\n        disabled={disabled}\n        className={toggleVariants({\n          variant,\n          size,\n          pressed: isPressed,\n          className,\n        })}\n        onClick={handleClick}\n        {...props}\n      />\n    );\n  },\n);\n\nToggle.displayName = \"Toggle\";\n\nexport function ToggleGroup({\n  type = \"single\",\n  value,\n  defaultValue,\n  onValueChange,\n  variant = \"default\",\n  size = \"md\",\n  orientation = \"horizontal\",\n  disabled,\n  children,\n  className,\n  ...props\n}: ToggleGroupProps) {\n  const isControlled = value !== undefined;\n  const [uncontrolledValue, setUncontrolledValue] = React.useState<\n    string | string[] | undefined\n  >(defaultValue);\n  const selectedValue = isControlled ? value : uncontrolledValue;\n  const segmented = type === \"single\";\n\n  const setValue = React.useCallback(\n    (itemValue: string) => {\n      if (type === \"multiple\") {\n        const current = Array.isArray(selectedValue) ? selectedValue : [];\n        const next = current.includes(itemValue)\n          ? current.filter((entry) => entry !== itemValue)\n          : [...current, itemValue];\n        if (!isControlled) setUncontrolledValue(next);\n        onValueChange?.(next);\n        return;\n      }\n\n      const next = selectedValue === itemValue ? \"\" : itemValue;\n      if (!isControlled) setUncontrolledValue(next);\n      onValueChange?.(next);\n    },\n    [isControlled, onValueChange, selectedValue, type],\n  );\n\n  const context = React.useMemo<ToggleGroupContextValue>(\n    () => ({\n      type,\n      value: selectedValue,\n      setValue,\n      variant,\n      size,\n      disabled,\n      segmented,\n    }),\n    [disabled, segmented, selectedValue, setValue, size, type, variant],\n  );\n\n  React.useEffect(() => {\n    ensureToggleStyles();\n  }, []);\n\n  const segmentLayout =\n    segmented && typeof selectedValue === \"string\"\n      ? getSegmentIndex(children, selectedValue)\n      : null;\n\n  return (\n    <ToggleGroupContext.Provider value={context}>\n      <div\n        role=\"group\"\n        data-slot=\"toggle-group\"\n        data-type={type}\n        data-orientation={orientation}\n        className={cn(\n          \"inline-flex\",\n          segmented && cn(wensityCardSurfaceClass, \"relative rounded-xl p-1\"),\n          orientation === \"horizontal\"\n            ? segmented\n              ? \"flex-row items-stretch gap-1\"\n              : \"flex-row flex-wrap items-center gap-2\"\n            : segmented\n              ? \"flex-col gap-1\"\n              : \"flex-col items-stretch gap-2\",\n          className,\n        )}\n        style={\n          segmentLayout\n            ? ({\n                \"--toggle-segment-count\": segmentLayout.count,\n                \"--toggle-segment-index\": segmentLayout.index,\n              } as React.CSSProperties)\n            : undefined\n        }\n        {...props}\n      >\n        {segmented && segmentLayout && segmentLayout.count > 0 ? (\n          <span\n            aria-hidden=\"true\"\n            data-slot=\"toggle-segment-indicator\"\n            data-orientation={orientation}\n            className={cn(\n              \"pointer-events-none absolute rounded-lg\",\n              \"bg-[color-mix(in_srgb,var(--foreground)_5%,var(--background))]\",\n              \"dark:bg-[color-mix(in_srgb,var(--foreground)_13%,var(--background))]\",\n              \"shadow-[0_1px_2px_rgba(0,0,0,0.07),0_0_0_1px_color-mix(in_srgb,var(--foreground)_8%,transparent)]\",\n              \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.36),0_0_0_1px_color-mix(in_srgb,var(--foreground)_12%,transparent)]\",\n              orientation === \"horizontal\" ? \"top-1 bottom-1 left-1\" : \"left-1 right-1 top-1\",\n            )}\n            style={\n              orientation === \"horizontal\"\n                ? {\n                    width:\n                      \"calc((100% - 0.5rem - (var(--toggle-segment-count) - 1) * 0.25rem) / var(--toggle-segment-count))\",\n                    transform:\n                      \"translate3d(calc(var(--toggle-segment-index) * (100% + 0.25rem)), 0, 0)\",\n                  }\n                : {\n                    height:\n                      \"calc((100% - 0.5rem - (var(--toggle-segment-count) - 1) * 0.25rem) / var(--toggle-segment-count))\",\n                    transform:\n                      \"translate3d(0, calc(var(--toggle-segment-index) * (100% + 0.25rem)), 0)\",\n                  }\n            }\n          />\n        ) : null}\n        {children}\n      </div>\n    </ToggleGroupContext.Provider>\n  );\n}\n\nexport const ToggleGroupItem = React.forwardRef<\n  HTMLButtonElement,\n  ToggleGroupItemProps\n>(\n  (\n    {\n      value,\n      variant,\n      size,\n      disabled,\n      className,\n      onClick,\n      type = \"button\",\n      ...props\n    },\n    ref,\n  ) => {\n    const context = useToggleGroupContext(\"ToggleGroupItem\");\n    const itemVariant = variant ?? context.variant;\n    const itemSize = size ?? context.size;\n    const itemDisabled = disabled || context.disabled;\n    const pressed = isItemPressed(context.type, context.value, value);\n\n    const handleClick = React.useCallback(\n      (event: React.MouseEvent<HTMLButtonElement>) => {\n        context.setValue(value);\n        onClick?.(event);\n      },\n      [context, onClick, value],\n    );\n\n    return (\n      <button\n        ref={ref}\n        type={type}\n        value={value}\n        aria-pressed={pressed}\n        data-slot=\"toggle-group-item\"\n        data-state={pressed ? \"on\" : \"off\"}\n        data-segmented={context.segmented ? \"true\" : undefined}\n        disabled={itemDisabled}\n        className={toggleVariants({\n          variant: itemVariant,\n          size: itemSize,\n          pressed,\n          segmented: context.segmented,\n          className: cn(\n            context.segmented && \"min-w-[4.5rem] flex-1\",\n            groupItemBase,\n            className,\n          ),\n        })}\n        onClick={handleClick}\n        {...props}\n      />\n    );\n  },\n);\n\nToggleGroupItem.displayName = \"ToggleGroupItem\";\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/toggle.tsx. For Pro components and updates, use pnpm dlx wensity@latest add toggle.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "toggle",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/toggle",
+      "shadcnUrl": "https://ui.wensity.com/r/toggle",
+      "cliInstall": "pnpm dlx wensity@latest add toggle"
+    }
+  }
+}

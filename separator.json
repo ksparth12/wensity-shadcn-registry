@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "separator",
+  "type": "registry:block",
+  "title": "Separator",
+  "description": "Dividers for layout sections, labels, gradients, and vertical splits.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/separator.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/separator.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type SeparatorOrientation = \"horizontal\" | \"vertical\";\nexport type SeparatorVariant = \"default\" | \"gradient\" | \"dashed\";\nexport type SeparatorLabelPosition = \"start\" | \"center\" | \"end\";\n\nexport interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {\n  orientation?: SeparatorOrientation;\n  variant?: SeparatorVariant;\n  label?: React.ReactNode;\n  labelPosition?: SeparatorLabelPosition;\n}\n\nexport const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(\n  (\n    {\n      className,\n      orientation = \"horizontal\",\n      variant = \"default\",\n      label,\n      labelPosition = \"center\",\n      ...props\n    },\n    ref\n  ) => {\n    const isHorizontal = orientation === \"horizontal\";\n\n    // Style builders for line elements\n    const getLineStyles = (isFirst: boolean) => {\n      return cn(\n        isHorizontal ? \"h-px w-full\" : \"w-px h-full self-stretch\",\n        // Default Solid Styling\n        variant === \"default\" && \"bg-zinc-200 dark:bg-zinc-800\",\n        // Gradient Styling\n        variant === \"gradient\" && [\n          isHorizontal\n            ? isFirst\n              ? \"bg-gradient-to-r from-transparent via-zinc-300 to-zinc-300 dark:via-zinc-700 dark:to-zinc-700\"\n              : \"bg-gradient-to-r from-zinc-300 via-zinc-300 to-transparent dark:from-zinc-700 dark:via-zinc-700 dark:to-transparent\"\n            : isFirst\n            ? \"bg-gradient-to-b from-transparent via-zinc-300 to-zinc-300 dark:via-zinc-700 dark:to-zinc-700\"\n            : \"bg-gradient-to-b from-zinc-300 via-zinc-300 to-transparent dark:from-zinc-700 dark:via-zinc-700 dark:to-transparent\",\n        ],\n        // Dashed Styling (Uses border rather than background fill)\n        variant === \"dashed\" && [\n          isHorizontal\n            ? \"border-t border-dashed border-zinc-300 dark:border-zinc-800\"\n            : \"border-l border-dashed border-zinc-300 dark:border-zinc-800\",\n        ]\n      );\n    };\n\n    // If no label, render a single straight line\n    if (!label) {\n      return (\n        <div\n          ref={ref}\n          role=\"none\"\n          className={cn(\n            isHorizontal ? \"h-px w-full\" : \"w-px h-full self-stretch\",\n            // Single line background config\n            variant === \"default\" && \"bg-zinc-200 dark:bg-zinc-800\",\n            variant === \"gradient\" && [\n              isHorizontal\n                ? \"bg-gradient-to-r from-transparent via-zinc-300 to-transparent dark:via-zinc-700\"\n                : \"bg-gradient-to-b from-transparent via-zinc-300 to-transparent dark:via-zinc-700\",\n            ],\n            variant === \"dashed\" && [\n              isHorizontal\n                ? \"border-t border-dashed border-zinc-300 dark:border-zinc-800\"\n                : \"border-l border-dashed border-zinc-300 dark:border-zinc-800\",\n            ],\n            className\n          )}\n          {...props}\n        />\n      );\n    }\n\n    // Label position alignment sizes for the surrounding lines\n    const line1Flex =\n      labelPosition === \"start\"\n        ? isHorizontal\n          ? \"w-8 shrink-0\"\n          : \"h-8 shrink-0\"\n        : \"flex-1\";\n    const line2Flex =\n      labelPosition === \"end\"\n        ? isHorizontal\n          ? \"w-8 shrink-0\"\n          : \"h-8 shrink-0\"\n        : \"flex-1\";\n\n    return (\n      <div\n        ref={ref}\n        role=\"none\"\n        className={cn(\n          \"flex items-center text-zinc-400 dark:text-zinc-500 select-none\",\n          isHorizontal\n            ? \"flex-row w-full gap-3 text-[11px] font-semibold tracking-wider\"\n            : \"flex-col h-full gap-3 py-1 text-[10px] font-semibold tracking-wider\",\n          className\n        )}\n        {...props}\n      >\n        <div className={cn(getLineStyles(true), line1Flex)} />\n        <span className=\"shrink-0 font-mono text-[10px] uppercase text-zinc-400 dark:text-zinc-500\">\n          {label}\n        </span>\n        <div className={cn(getLineStyles(false), line2Flex)} />\n      </div>\n    );\n  }\n);\nSeparator.displayName = \"Separator\";\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/separator.tsx. For Pro components and updates, use pnpm dlx wensity@latest add separator.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "separator",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/separator",
+      "shadcnUrl": "https://ui.wensity.com/r/separator",
+      "cliInstall": "pnpm dlx wensity@latest add separator"
+    }
+  }
+}

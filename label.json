@@ -1,0 +1,142 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "label",
+  "type": "registry:block",
+  "title": "Label",
+  "description": "A polished label primitive for forms, settings, and field groups.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/label.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/label.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type LabelVariant =\n  | \"default\"\n  | \"required\"\n  | \"optional\"\n  | \"muted\"\n  | \"inline\";\n\nexport interface LabelProps\n  extends React.LabelHTMLAttributes<HTMLLabelElement> {\n  variant?: LabelVariant;\n  /** Secondary copy shown beside the label text — most useful with `inline`. */\n  hint?: React.ReactNode;\n  disabled?: boolean;\n}\n\nconst base = \"text-[13px] leading-none tracking-[-0.01em]\";\n\nconst variantClasses: Record<LabelVariant, string> = {\n  default: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  required: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  optional: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  muted: cn(\n    base,\n    \"block text-[12px] font-normal leading-[1.4] text-[var(--muted-foreground)]\",\n  ),\n  inline: cn(\n    base,\n    \"inline-flex min-w-[7.5rem] items-center gap-2 font-medium text-[var(--foreground)]\",\n  ),\n};\n\nfunction RequiredMarker() {\n  return (\n    <span\n      aria-hidden=\"true\"\n      className=\"ml-1 font-medium text-red-600 dark:text-red-400\"\n    >\n      *\n    </span>\n  );\n}\n\nfunction OptionalMarker() {\n  return (\n    <span className=\"ml-2 text-[11px] font-medium text-[var(--muted-foreground)]\">\n      Optional\n    </span>\n  );\n}\n\nexport const labelVariants = variantClasses;\n\nexport function Label({\n  variant = \"default\",\n  hint,\n  disabled = false,\n  className,\n  children,\n  ...props\n}: LabelProps) {\n  const showRequired = variant === \"required\";\n  const showOptional = variant === \"optional\";\n  const isInline = variant === \"inline\";\n\n  return (\n    <label\n      data-slot=\"label\"\n      data-variant={variant}\n      data-disabled={disabled ? \"\" : undefined}\n      className={cn(\n        variantClasses[variant],\n        disabled && \"cursor-not-allowed opacity-45\",\n        className,\n      )}\n      {...props}\n    >\n      <span className={cn(isInline && \"inline-flex items-center gap-2\")}>\n        <span>{children}</span>\n        {showRequired ? <RequiredMarker /> : null}\n        {showOptional ? <OptionalMarker /> : null}\n        {hint ? (\n          <span\n            className={cn(\n              \"font-normal text-[var(--muted-foreground)]\",\n              isInline ? \"text-[12px]\" : \"mt-1 block text-[12px] leading-[1.45]\",\n            )}\n          >\n            {hint}\n          </span>\n        ) : null}\n      </span>\n    </label>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/label.tsx. For Pro components and updates, use pnpm dlx wensity@latest add label.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "label",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/label",
+      "shadcnUrl": "https://ui.wensity.com/r/label",
+      "cliInstall": "pnpm dlx wensity@latest add label"
+    }
+  }
+}

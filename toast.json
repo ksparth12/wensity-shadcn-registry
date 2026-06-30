@@ -1,0 +1,143 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toast",
+  "type": "registry:block",
+  "title": "Toast",
+  "description": "Transient notifications for status, warnings, errors, and actions.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "@tabler/icons-react",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/toast.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/toast.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  IconAlertTriangle,\n  IconCheck,\n  IconCircleX,\n  IconInfoCircle,\n  IconX,\n} from \"@tabler/icons-react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type ToastVariant = \"info\" | \"success\" | \"warning\" | \"error\" | \"action\";\nexport type ToastPlacement =\n  | \"top-left\"\n  | \"top-right\"\n  | \"bottom-left\"\n  | \"bottom-right\"\n  | \"top-center\"\n  | \"bottom-center\";\n\nexport interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, \"title\"> {\n  variant?: ToastVariant;\n  title?: React.ReactNode;\n  description?: React.ReactNode;\n  icon?: React.ReactNode;\n  action?: React.ReactNode;\n  onDismiss?: () => void;\n  dismissLabel?: string;\n}\n\nexport interface ToastViewportProps extends React.HTMLAttributes<HTMLDivElement> {\n  placement?: ToastPlacement;\n}\n\nconst variantStyles: Record<\n  ToastVariant,\n  {\n    root: string;\n    icon: string;\n    iconNode: React.ReactNode;\n  }\n> = {\n  info: {\n    root: cn(\n      \"border-[#ded3c5] bg-[#eef8ff] text-slate-950\",\n      \"dark:border-white/[0.08] dark:bg-[#101820] dark:text-white\",\n    ),\n    icon: \"text-sky-600 dark:text-sky-300\",\n    iconNode: <IconInfoCircle stroke={1.9} />,\n  },\n  success: {\n    root: cn(\n      \"border-[#ded3c5] bg-[#f7f2e9] text-[#181716]\",\n      \"dark:border-white/[0.08] dark:bg-[#111111] dark:text-white\",\n    ),\n    icon: \"text-emerald-600 dark:text-emerald-300\",\n    iconNode: <IconCheck stroke={2.1} />,\n  },\n  warning: {\n    root: cn(\n      \"border-[#ded3c5] bg-[#f7f2e9] text-[#181716]\",\n      \"dark:border-white/[0.08] dark:bg-[#111111] dark:text-white\",\n    ),\n    icon: \"text-amber-600 dark:text-amber-300\",\n    iconNode: <IconAlertTriangle stroke={1.9} />,\n  },\n  error: {\n    root: cn(\n      \"border-[#ded3c5] bg-[#fff0f0] text-slate-950\",\n      \"dark:border-white/[0.08] dark:bg-[#1c1111] dark:text-white\",\n    ),\n    icon: \"text-red-600 dark:text-red-300\",\n    iconNode: <IconCircleX stroke={1.9} />,\n  },\n  action: {\n    root: cn(\n      \"border-[#ded3c5] bg-[#f7f2e9] text-[#181716]\",\n      \"dark:border-white/[0.08] dark:bg-[#111111] dark:text-white\",\n    ),\n    icon: \"text-[#5f5a52] dark:text-zinc-300\",\n    iconNode: <IconInfoCircle stroke={1.9} />,\n  },\n};\n\nconst placementClasses: Record<ToastPlacement, string> = {\n  \"top-left\": \"top-4 left-4 items-start\",\n  \"top-right\": \"top-4 right-4 items-end\",\n  \"bottom-left\": \"bottom-4 left-4 items-start\",\n  \"bottom-right\": \"right-4 bottom-4 items-end\",\n  \"top-center\": \"top-4 left-1/2 -translate-x-1/2 items-center\",\n  \"bottom-center\": \"bottom-4 left-1/2 -translate-x-1/2 items-center\",\n};\n\nexport const Toast = React.forwardRef<HTMLDivElement, ToastProps>(\n  (\n    {\n      className,\n      variant = \"info\",\n      title,\n      description,\n      icon,\n      action,\n      onDismiss,\n      dismissLabel = \"Dismiss notification\",\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    React.useEffect(() => {\n      ensureToastStyles();\n    }, []);\n\n    const styles = variantStyles[variant];\n\n    return (\n      <div\n        ref={ref}\n        role={variant === \"error\" ? \"alert\" : \"status\"}\n        data-slot=\"toast\"\n        data-variant={variant}\n        className={cn(\n          \"wensity-toast relative isolate flex w-full max-w-sm gap-3 overflow-hidden rounded-xl border\",\n          \"px-3.5 py-3\",\n          \"shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_24px_-22px_rgba(0,0,0,0.22)]\",\n          \"dark:shadow-[0_1px_2px_rgba(0,0,0,0.30),0_14px_30px_-24px_rgba(0,0,0,0.74)]\",\n          styles.root,\n          className,\n        )}\n        {...props}\n      >\n        <span\n          aria-hidden=\"true\"\n          className={cn(\"mt-0.5 flex size-5 shrink-0 items-center justify-center opacity-95 [&_svg]:size-[18px]\", styles.icon)}\n        >\n          {icon ?? styles.iconNode}\n        </span>\n        <div className=\"min-w-0 flex-1\">\n          <div className=\"space-y-1\">\n            {title ? (\n              <div className=\"text-[13px] font-semibold leading-5 tracking-[-0.01em] text-slate-950 dark:text-white\">\n                {title}\n              </div>\n            ) : null}\n            {description ? (\n              <div className=\"text-[12.5px] leading-5 text-slate-600 dark:text-zinc-400\">\n                {description}\n              </div>\n            ) : null}\n            {children}\n          </div>\n        </div>\n        {action ? <div className=\"ml-2 flex shrink-0 items-center self-center\">{action}</div> : null}\n        {onDismiss ? (\n          <button\n            type=\"button\"\n            aria-label={dismissLabel}\n            onClick={onDismiss}\n            className={cn(\n              \"-mr-1 flex size-7 shrink-0 items-center justify-center rounded-lg text-slate-500\",\n              \"transition-[background,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]\",\n              \"hover:bg-slate-100 hover:text-slate-950\",\n              \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/15\",\n              \"dark:text-zinc-400 dark:hover:bg-white/[0.07] dark:hover:text-white dark:focus-visible:ring-white/18\",\n            )}\n          >\n            <IconX aria-hidden=\"true\" className=\"size-4\" stroke={1.9} />\n          </button>\n        ) : null}\n      </div>\n    );\n  },\n);\nToast.displayName = \"Toast\";\n\nexport const ToastViewport = React.forwardRef<HTMLDivElement, ToastViewportProps>(\n  ({ className, placement = \"top-right\", ...props }, ref) => (\n    <div\n      ref={ref}\n      data-slot=\"toast-viewport\"\n      className={cn(\n        \"pointer-events-none fixed z-50 flex w-[min(calc(100vw-2rem),24rem)] flex-col gap-2\",\n        placementClasses[placement],\n        \"[&>[data-slot=toast]]:pointer-events-auto\",\n        className,\n      )}\n      {...props}\n    />\n  ),\n);\nToastViewport.displayName = \"ToastViewport\";\n\nfunction ensureToastStyles() {\n  if (typeof document === \"undefined\") return;\n  if (document.getElementById(\"wensity-toast-styles\")) return;\n\n  const style = document.createElement(\"style\");\n  style.id = \"wensity-toast-styles\";\n  style.textContent = `\n@media (prefers-reduced-motion: no-preference) {\n  .wensity-toast {\n    animation: wensity-toast-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) both;\n  }\n}\n\n@keyframes wensity-toast-enter {\n  from {\n    opacity: 0;\n    transform: translateY(-8px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n`;\n  document.head.appendChild(style);\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/toast.tsx. For Pro components and updates, use pnpm dlx wensity@latest add toast.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "toast",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/toast",
+      "shadcnUrl": "https://ui.wensity.com/r/toast",
+      "cliInstall": "pnpm dlx wensity@latest add toast"
+    }
+  }
+}

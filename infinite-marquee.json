@@ -4,20 +4,21 @@
   "type": "registry:block",
   "title": "Infinite Marquee",
   "description": "Your logos scroll forever. Silky, seamless, fading softly at both edges.",
-  "author": "Wensity <hello@wensity.com>",
+  "author": "Wensity <hey@wensity.com>",
   "dependencies": [
     "clsx",
     "tailwind-merge"
   ],
+  "registryDependencies": [],
   "files": [
     {
       "path": "registry/wensity/lib/utils.ts",
       "type": "registry:lib",
       "target": "@lib/utils.ts",
-      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]): string {\n  return twMerge(clsx(inputs));\n}\n"
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
     },
     {
-      "path": "packages/ui/src/components/library/cinematic-interactions/InfiniteMarquee.tsx",
+      "path": "registry/wensity/infinite-marquee.tsx",
       "type": "registry:component",
       "target": "@components/wensity/infinite-marquee.tsx",
       "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface InfiniteMarqueeProps {\n  /** Items rendered exactly twice (for seamless loop). */\n  items: React.ReactNode[];\n  /** Cycle duration in seconds (lower = faster). */\n  speed?: number;\n  /** Animation direction. */\n  direction?: \"left\" | \"right\";\n  /** Pause the loop when the cursor enters. Off by default — most marketing\n   *  marquees should keep moving so they never feel \"stuck\" mid-page. */\n  pauseOnHover?: boolean;\n  /** Tailwind gap class between items, e.g. \"gap-10\". */\n  gap?: string;\n  /** Apply the soft mask-image fade at both edges. */\n  fade?: boolean;\n  className?: string;\n}\n\n/**\n * InfiniteMarquee\n *\n * Zero-jitter, GPU-only horizontal marquee. We duplicate the children once\n * and animate from `translate3d(0,0,0)` → `translate3d(-50%,0,0)` via a CSS\n * keyframe (defined in `globals.css`), so the work stays on the compositor\n * and never touches the JS thread.\n */\nexport function InfiniteMarquee({\n  items,\n  speed = 30,\n  direction = \"left\",\n  pauseOnHover = false,\n  gap = \"gap-20\",\n  fade = true,\n  className,\n}: InfiniteMarqueeProps) {\n  return (\n    <div\n      className={cn(\n        \"group/marquee relative w-full overflow-hidden\",\n        fade && [\n          \"[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n          \"[-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n        ],\n        className\n      )}\n    >\n      <div\n        className={cn(\n          \"flex w-max items-center will-change-transform\",\n          // Honour the OS reduced-motion preference — freeze the loop.\n          \"motion-reduce:![animation:none]\",\n          gap\n        )}\n        style={{\n          animation: `${\n            direction === \"left\" ? \"wensity-marquee-x\" : \"wensity-marquee-x-reverse\"\n          } ${speed}s linear infinite`,\n          animationPlayState: \"running\",\n        }}\n        onMouseEnter={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"paused\";\n        }}\n        onMouseLeave={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"running\";\n        }}\n      >\n        {/* Original strip */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden={false}>\n          {items.map((node, i) => (\n            <div key={`a-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n        {/* Duplicate — exactly once — for the seamless wrap at -50%. */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden>\n          {items.map((node, i) => (\n            <div key={`b-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n}\n"

@@ -27,14 +27,37 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
 - `button` - Button
 - `input` - Input
-- `textarea` - Textarea
+- `text-area` - Text Area
 - `select` - Select
-- `form-field` - FormField
+- `form-field` - Form Field
 - `badge` - Badge
 - `checkbox` - Checkbox
 - `switch` - Switch
 - `radio-group` - Radio Group
+- `toggle` - Toggle
 - `bento-grid` - Bento Grid
+- `label` - Label
+- `input-otp` - Input OTP
+- `combobox` - Combobox
+- `avatar` - Avatar
+- `table` - Table
+- `progress` - Progress
+- `alert` - Alert
+- `skeleton` - Skeleton
+- `spinner` - Spinner
+- `toast` - Toast
+- `dialog` - Dialog
+- `sheet` - Sheet
+- `drawer` - Drawer
+- `popover` - Popover
+- `tooltip` - Tooltip
+- `tabs` - Tabs
+- `breadcrumb` - Breadcrumb
+- `pagination` - Pagination
+- `card` - Card
+- `separator` - Separator
+- `resizable` - Resizable
+- `hover-card` - Hover Card
 
 ## Source
 

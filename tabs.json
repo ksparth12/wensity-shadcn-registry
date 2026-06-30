@@ -1,0 +1,143 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs",
+  "type": "registry:block",
+  "title": "Tabs",
+  "description": "Tabbed navigation for sections, settings, and segmented controls.",
+  "author": "Wensity <hey@wensity.com>",
+  "dependencies": [
+    "clsx",
+    "framer-motion",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/wensity/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    },
+    {
+      "path": "registry/wensity/tabs.tsx",
+      "type": "registry:component",
+      "target": "@components/wensity/tabs.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion, AnimatePresence, LayoutGroup } from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport type TabsVariant =\n  | \"default\"\n  | \"underline\"\n  | \"pills\"\n  | \"segmented\"\n  | \"vertical\";\n\nexport type TabsSize = \"sm\" | \"md\" | \"lg\";\n\nexport interface TabsProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"defaultValue\" | \"onChange\"> {\n  variant?: TabsVariant;\n  size?: TabsSize;\n  value?: string;\n  defaultValue?: string;\n  onValueChange?: (value: string) => void;\n  children: React.ReactNode;\n}\n\nexport interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n}\n\nexport interface TabsTriggerProps\n  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, \"value\"> {\n  value: string;\n}\n\nexport interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {\n  value: string;\n}\n\n/* ─── Context ───────────────────────────────────────────────── */\n\ntype TabsContextValue = {\n  activeValue: string;\n  setActiveValue: (v: string) => void;\n  variant: TabsVariant;\n  size: TabsSize;\n  layoutId: string;\n};\n\nconst TabsContext = React.createContext<TabsContextValue | null>(null);\n\nfunction useTabsContext() {\n  const ctx = React.useContext(TabsContext);\n  if (!ctx) throw new Error(\"Tabs compound components must be used within <Tabs>\");\n  return ctx;\n}\n\n/* ─── Easing & Spring ───────────────────────────────────────── */\n\nconst EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];\n\nconst indicatorSpring = {\n  type: \"spring\" as const,\n  duration: 0.28,\n  bounce: 0.08,\n};\n\nconst contentFade = {\n  initial: { opacity: 0 },\n  animate: { opacity: 1 },\n  exit: { opacity: 0 },\n  transition: { duration: 0.15, ease: EASE_OUT },\n};\n\n/* ─── Size Maps ─────────────────────────────────────────────── */\n\nconst triggerSizes: Record<TabsSize, string> = {\n  sm: \"h-7 px-2.5 text-xs gap-1.5 [&_svg]:size-3\",\n  md: \"h-8 px-3 text-sm gap-2 [&_svg]:size-3.5\",\n  lg: \"h-9 px-3.5 text-[15px] gap-2 [&_svg]:size-4\",\n};\n\nconst listGaps: Record<TabsSize, string> = {\n  sm: \"gap-0.5\",\n  md: \"gap-1\",\n  lg: \"gap-1\",\n};\n\n/* ─── Variant-specific list styles ──────────────────────────── */\n\nconst listVariantClasses: Record<TabsVariant, string> = {\n  default: \"\",\n  underline: cn(\n    \"border-b border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n    \"dark:border-white/[0.08]\",\n  ),\n  pills: \"\",\n  segmented: cn(\n    \"rounded-xl p-1\",\n    \"bg-[color-mix(in_srgb,var(--foreground)_5%,var(--background))]\",\n    \"border border-[color-mix(in_srgb,var(--foreground)_8%,transparent)]\",\n    \"dark:bg-[#0c0c0e] dark:border-white/[0.04]\",\n  ),\n  vertical: cn(\n    \"flex-col items-stretch\",\n    \"border-l border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n    \"dark:border-white/[0.08]\",\n    \"pl-0\",\n  ),\n};\n\n/* ─── Trigger base & variant ────────────────────────────────── */\n\nconst triggerBase = cn(\n  \"relative inline-flex shrink-0 items-center justify-center whitespace-nowrap\",\n  \"font-medium leading-none tracking-[-0.01em] select-none touch-manipulation\",\n  \"rounded-lg outline-none cursor-default\",\n  \"transition-[color,background-color] duration-[180ms] ease-[cubic-bezier(0.23,1,0.32,1)]\",\n  \"focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]\",\n  \"disabled:pointer-events-none disabled:opacity-45\",\n  \"[&_svg]:pointer-events-none [&_svg]:shrink-0\",\n);\n\nfunction triggerVariantClasses(\n  variant: TabsVariant,\n  isActive: boolean,\n): string {\n  switch (variant) {\n    case \"default\":\n      return isActive\n        ? \"text-[var(--foreground)]\"\n        : cn(\n            \"text-[var(--muted-foreground)]\",\n            \"hover:text-[var(--foreground)]\",\n          );\n\n    case \"underline\":\n      return isActive\n        ? \"text-[var(--foreground)] rounded-none\"\n        : cn(\n            \"text-[var(--muted-foreground)] rounded-none\",\n          );\n\n    case \"pills\":\n      return isActive\n        ? cn(\n            \"text-[var(--foreground)] rounded-full\",\n          )\n        : cn(\n            \"text-[var(--muted-foreground)] rounded-full\",\n          );\n\n    case \"segmented\":\n      return isActive\n        ? \"text-[var(--foreground)] z-[1]\"\n        : cn(\n            \"text-[var(--muted-foreground)] z-[1]\",\n          );\n\n    case \"vertical\":\n      return isActive\n        ? cn(\n            \"text-[var(--foreground)] justify-start rounded-none\",\n          )\n        : cn(\n            \"text-[var(--muted-foreground)] justify-start rounded-none\",\n          );\n\n    default:\n      return \"\";\n  }\n}\n\n/* ─── Hover class (applied via data-attr for touch safety) ─── */\n\nconst hoverClasses: Record<TabsVariant, string> = {\n  default:\n    \"hover:text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--foreground)_4%,var(--background))]\",\n  underline: \"hover:text-[var(--foreground)]\",\n  pills:\n    \"hover:text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--foreground)_5%,var(--background))]\",\n  segmented: \"hover:text-[var(--foreground)]\",\n  vertical:\n    \"hover:text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--foreground)_4%,var(--background))]\",\n};\n\n/* ─── <Tabs> ────────────────────────────────────────────────── */\n\nexport const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(\n  (\n    {\n      variant = \"default\",\n      size = \"md\",\n      value: controlledValue,\n      defaultValue,\n      onValueChange,\n      className,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const [internalValue, setInternalValue] = React.useState(\n      defaultValue ?? \"\",\n    );\n    const activeValue =\n      controlledValue !== undefined ? controlledValue : internalValue;\n\n    const layoutId = React.useId();\n\n    const setActiveValue = React.useCallback(\n      (v: string) => {\n        if (controlledValue === undefined) setInternalValue(v);\n        onValueChange?.(v);\n      },\n      [controlledValue, onValueChange],\n    );\n\n    const ctx = React.useMemo<TabsContextValue>(\n      () => ({ activeValue, setActiveValue, variant, size, layoutId }),\n      [activeValue, setActiveValue, variant, size, layoutId],\n    );\n\n    return (\n      <TabsContext.Provider value={ctx}>\n        <div\n          ref={ref}\n          data-slot=\"tabs\"\n          data-variant={variant}\n          className={cn(\n            variant === \"vertical\" ? \"flex gap-4\" : \"flex flex-col\",\n            className,\n          )}\n          {...props}\n        >\n          <LayoutGroup id={layoutId}>\n            {children}\n          </LayoutGroup>\n        </div>\n      </TabsContext.Provider>\n    );\n  },\n);\nTabs.displayName = \"Tabs\";\n\n/* ─── <TabsList> ────────────────────────────────────────────── */\n\nexport const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(\n  ({ className, children, ...props }, ref) => {\n    const { variant, size } = useTabsContext();\n\n    return (\n      <div\n        ref={ref}\n        role=\"tablist\"\n        data-slot=\"tabs-list\"\n        data-variant={variant}\n        className={cn(\n          \"inline-flex items-center\",\n          listGaps[size],\n          listVariantClasses[variant],\n          variant === \"vertical\" && \"min-w-[140px]\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n      </div>\n    );\n  },\n);\nTabsList.displayName = \"TabsList\";\n\n/* ─── <TabsTrigger> ─────────────────────────────────────────── */\n\nexport const TabsTrigger = React.forwardRef<\n  HTMLButtonElement,\n  TabsTriggerProps\n>(({ value, disabled, className, children, ...props }, ref) => {\n  const { activeValue, setActiveValue, variant, size, layoutId } =\n    useTabsContext();\n  const isActive = activeValue === value;\n\n  return (\n    <button\n      ref={ref}\n      role=\"tab\"\n      type=\"button\"\n      data-slot=\"tabs-trigger\"\n      data-state={isActive ? \"active\" : \"inactive\"}\n      data-variant={variant}\n      aria-selected={isActive}\n      aria-controls={`tabpanel-${layoutId}-${value}`}\n      tabIndex={isActive ? 0 : -1}\n      disabled={disabled}\n      onClick={() => setActiveValue(value)}\n      onKeyDown={(e) => {\n        const triggers = Array.from(\n          e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(\n            '[data-slot=\"tabs-trigger\"]:not([disabled])',\n          ) ?? [],\n        );\n        const isVertical = variant === \"vertical\";\n        const nextKey = isVertical ? \"ArrowDown\" : \"ArrowRight\";\n        const prevKey = isVertical ? \"ArrowUp\" : \"ArrowLeft\";\n        const idx = triggers.indexOf(e.currentTarget);\n\n        if (e.key === nextKey) {\n          e.preventDefault();\n          const next = triggers[(idx + 1) % triggers.length];\n          next?.focus();\n          next && setActiveValue(next.dataset.value ?? \"\");\n        } else if (e.key === prevKey) {\n          e.preventDefault();\n          const prev =\n            triggers[(idx - 1 + triggers.length) % triggers.length];\n          prev?.focus();\n          prev && setActiveValue(prev.dataset.value ?? \"\");\n        } else if (e.key === \"Home\") {\n          e.preventDefault();\n          triggers[0]?.focus();\n          triggers[0] && setActiveValue(triggers[0].dataset.value ?? \"\");\n        } else if (e.key === \"End\") {\n          e.preventDefault();\n          const last = triggers[triggers.length - 1];\n          last?.focus();\n          last && setActiveValue(last.dataset.value ?? \"\");\n        }\n      }}\n      data-value={value}\n      className={cn(\n        triggerBase,\n        triggerSizes[size],\n        triggerVariantClasses(variant, isActive),\n        !isActive && hoverClasses[variant],\n        className,\n      )}\n      {...props}\n    >\n      {children}\n\n      {/* ── Default sliding indicator pill ── */}\n      {variant === \"default\" && isActive && (\n        <motion.span\n          layoutId={`tabs-default-pill-${layoutId}`}\n          className={cn(\n            \"absolute inset-0 rounded-lg\",\n            \"bg-[color-mix(in_srgb,var(--foreground)_7%,var(--background))]\",\n            \"border border-[color-mix(in_srgb,var(--foreground)_8%,transparent)]\",\n            \"dark:bg-[color-mix(in_srgb,var(--foreground)_10%,var(--background))]\",\n            \"dark:border-white/[0.04]\",\n          )}\n          transition={indicatorSpring}\n          style={{ zIndex: -1 }}\n        />\n      )}\n\n      {/* ── Underline sliding indicator ── */}\n      {variant === \"underline\" && isActive && (\n        <motion.span\n          layoutId={`tabs-underline-${layoutId}`}\n          className={cn(\n            \"absolute inset-x-0 -bottom-px h-[2px]\",\n            \"bg-[var(--foreground)]\",\n            \"dark:bg-[var(--foreground)]\",\n          )}\n          transition={indicatorSpring}\n          style={{ borderRadius: 1 }}\n        />\n      )}\n\n      {/* ── Pills background indicator ── */}\n      {variant === \"pills\" && isActive && (\n        <motion.span\n          layoutId={`tabs-pill-${layoutId}`}\n          className={cn(\n            \"absolute inset-0 rounded-full\",\n            \"bg-[color-mix(in_srgb,var(--foreground)_10%,var(--background))]\",\n            \"border border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n            \"dark:bg-[color-mix(in_srgb,var(--foreground)_14%,var(--background))]\",\n            \"dark:border-white/[0.08]\",\n          )}\n          transition={indicatorSpring}\n          style={{ zIndex: -1 }}\n        />\n      )}\n\n      {/* ── Segmented sliding backdrop ── */}\n      {variant === \"segmented\" && isActive && (\n        <motion.span\n          layoutId={`tabs-segment-${layoutId}`}\n          className={cn(\n            \"absolute inset-0 rounded-[10px]\",\n            \"bg-[var(--background)]\",\n            \"border border-[color-mix(in_srgb,var(--foreground)_10%,transparent)]\",\n            \"shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]\",\n            \"dark:bg-[#1a1a1e]\",\n            \"dark:border-white/[0.08]\",\n            \"dark:shadow-[0_2px_8px_rgba(0,0,0,0.48),0_1px_2px_rgba(0,0,0,0.24)]\",\n          )}\n          transition={indicatorSpring}\n          style={{ zIndex: -1 }}\n        />\n      )}\n\n      {/* ── Vertical accent bar ── */}\n      {variant === \"vertical\" && isActive && (\n        <motion.span\n          layoutId={`tabs-vertical-bar-${layoutId}`}\n          className={cn(\n            \"absolute -left-px top-1 bottom-1 w-[2px] rounded-full\",\n            \"bg-[var(--foreground)]\",\n            \"dark:bg-[var(--foreground)]\",\n          )}\n          transition={indicatorSpring}\n        />\n      )}\n    </button>\n  );\n});\nTabsTrigger.displayName = \"TabsTrigger\";\n\n/* ─── <TabsContent> ─────────────────────────────────────────── */\n\nexport const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(\n  ({ value, className, children, ...props }, ref) => {\n    const { activeValue, layoutId } = useTabsContext();\n    const isActive = activeValue === value;\n\n    if (!isActive) return null;\n\n    // Destructure HTML-only event handlers that conflict with Framer Motion's\n    // drag types to prevent TS2322 when spreading onto motion.div.\n    const {\n      onDrag: _onDrag,\n      onDragStart: _onDragStart,\n      onDragEnd: _onDragEnd,\n      onAnimationStart: _onAnimationStart,\n      ...safeProps\n    } = props;\n\n    return (\n      <AnimatePresence mode=\"wait\">\n        <motion.div\n          key={value}\n          ref={ref}\n          role=\"tabpanel\"\n          data-slot=\"tabs-content\"\n          id={`tabpanel-${layoutId}-${value}`}\n          tabIndex={0}\n          className={cn(\n            \"flex-1 outline-none\",\n            \"focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--foreground)_20%,transparent)] focus-visible:ring-offset-2\",\n            className,\n          )}\n          {...contentFade}\n          {...safeProps}\n        >\n          {children}\n        </motion.div>\n      </AnimatePresence>\n    );\n  },\n);\nTabsContent.displayName = \"TabsContent\";\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
+      "font-display": "var(--font-cabinet, ui-sans-serif, system-ui, sans-serif)",
+      "color-background": "var(--background)",
+      "color-foreground": "var(--foreground)",
+      "color-surface": "var(--surface)",
+      "color-surface-muted": "var(--surface-muted)",
+      "color-border": "var(--border)",
+      "color-border-strong": "var(--border-strong)",
+      "color-muted": "var(--muted)",
+      "color-muted-foreground": "var(--muted-foreground)",
+      "color-ring": "var(--ring)",
+      "color-chili-50": "#fff1ee",
+      "color-chili-100": "#ffe2db",
+      "color-chili-200": "#ffa896",
+      "color-chili-300": "#ff8a73",
+      "color-chili-400": "#f15a45",
+      "color-chili-500": "#cd1c18",
+      "color-chili-600": "#b31614",
+      "color-chili-700": "#9b1313",
+      "color-chili-800": "#6a0d0e",
+      "color-chili-900": "#38000a",
+      "color-chili-950": "#1f0006"
+    },
+    "light": {
+      "background": "#fafafa",
+      "foreground": "#0a0a0a",
+      "surface": "#ffffff",
+      "surface-muted": "#f4f4f5",
+      "border": "rgba(10, 10, 10, 0.08)",
+      "border-strong": "rgba(10, 10, 10, 0.16)",
+      "muted": "#f4f4f5",
+      "muted-foreground": "#52525b",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(10, 10, 10, 0.07)",
+      "llb-primary": "#18181b",
+      "llb-primary-fg": "#ffffff",
+      "llb-success": "#1f883d",
+      "llb-error": "#cf222e"
+    },
+    "dark": {
+      "background": "#0a0a0b",
+      "foreground": "#f5f5f6",
+      "surface": "#111113",
+      "surface-muted": "#18181b",
+      "border": "rgba(255, 255, 255, 0.08)",
+      "border-strong": "rgba(255, 255, 255, 0.14)",
+      "muted": "#1c1c1f",
+      "muted-foreground": "#a1a1aa",
+      "ring": "#cd1c18",
+      "pattern-fg": "rgba(255, 255, 255, 0.06)",
+      "llb-primary": "#f5f5f6",
+      "llb-primary-fg": "#0a0a0b",
+      "llb-success": "#2da44e",
+      "llb-error": "#f85149"
+    }
+  },
+  "css": {
+    "@utility scrollbar-hidden": {
+      "scrollbar-width": "none",
+      "-ms-overflow-style": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    },
+    "@keyframes wensity-marquee-x": {
+      "from": {
+        "transform": "translate3d(0, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(-50%, 0, 0)"
+      }
+    },
+    "@keyframes wensity-marquee-x-reverse": {
+      "from": {
+        "transform": "translate3d(-50%, 0, 0)"
+      },
+      "to": {
+        "transform": "translate3d(0, 0, 0)"
+      }
+    },
+    "@keyframes wensity-morph-rot-cw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "@keyframes wensity-morph-rot-ccw": {
+      "from": {
+        "transform": "rotate(0deg)"
+      },
+      "to": {
+        "transform": "rotate(-360deg)"
+      }
+    }
+  },
+  "docs": "Free Wensity component. Installs to @components/wensity/tabs.tsx. For Pro components and updates, use pnpm dlx wensity@latest add tabs.",
+  "categories": [
+    "UI Primitives",
+    "wensity",
+    "free"
+  ],
+  "meta": {
+    "wensity": {
+      "slug": "tabs",
+      "access": "free",
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/tabs",
+      "shadcnUrl": "https://ui.wensity.com/r/tabs",
+      "cliInstall": "pnpm dlx wensity@latest add tabs"
+    }
+  }
+}
