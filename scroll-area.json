@@ -1,11 +1,12 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "infinite-marquee",
+  "name": "scroll-area",
   "type": "registry:block",
-  "title": "Infinite Marquee",
-  "description": "Your logos scroll forever. Silky, seamless, fading softly at both edges.",
+  "title": "Scroll Area",
+  "description": "Provides styled scrolling for constrained content regions. Supports vertical, horizontal, and both-axis scrolling with auto-hide or always-visible scrollbar strategies.",
   "author": "Wensity <hey@wensity.com>",
   "dependencies": [
+    "@base-ui/react",
     "clsx",
     "tailwind-merge"
   ],
@@ -18,10 +19,10 @@
       "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
     },
     {
-      "path": "registry/wensity/infinite-marquee.tsx",
+      "path": "registry/wensity/scroll-area.tsx",
       "type": "registry:component",
-      "target": "@components/wensity/infinite-marquee.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface InfiniteMarqueeProps {\n  /** Items rendered exactly twice (for seamless loop). */\n  items: React.ReactNode[];\n  /** Cycle duration in seconds (lower = faster). */\n  speed?: number;\n  /** Animation direction. */\n  direction?: \"left\" | \"right\";\n  /** Pause the loop when the cursor enters. Off by default — most marketing\n   *  marquees should keep moving so they never feel \"stuck\" mid-page. */\n  pauseOnHover?: boolean;\n  /** Tailwind gap class between items, e.g. \"gap-10\". */\n  gap?: string;\n  /** Apply the soft mask-image fade at both edges. */\n  fade?: boolean;\n  className?: string;\n}\n\n/**\n * InfiniteMarquee\n *\n * Zero-jitter, GPU-only horizontal marquee. We duplicate the children once\n * and animate from `translate3d(0,0,0)` → `translate3d(-50%,0,0)` via a CSS\n * keyframe (defined in `globals.css`), so the work stays on the compositor\n * and never touches the JS thread.\n */\nexport function InfiniteMarquee({\n  items,\n  speed = 30,\n  direction = \"left\",\n  pauseOnHover = false,\n  gap = \"gap-20\",\n  fade = true,\n  className,\n}: InfiniteMarqueeProps) {\n  return (\n    <div\n      className={cn(\n        \"group/marquee relative w-full overflow-hidden\",\n        fade && [\n          \"[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n          \"[-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n        ],\n        className\n      )}\n    >\n      <div\n        className={cn(\n          \"flex w-max items-center will-change-transform\",\n          // Honour the OS reduced-motion preference — freeze the loop.\n          \"motion-reduce:![animation:none]\",\n          gap\n        )}\n        style={{\n          animation: `${\n            direction === \"left\" ? \"wensity-marquee-x\" : \"wensity-marquee-x-reverse\"\n          } ${speed}s linear infinite`,\n          animationPlayState: \"running\",\n        }}\n        onMouseEnter={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"paused\";\n        }}\n        onMouseLeave={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"running\";\n        }}\n      >\n        {/* Original strip */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden={false}>\n          {items.map((node, i) => (\n            <div key={`a-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n        {/* Duplicate — exactly once — for the seamless wrap at -50%. */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden>\n          {items.map((node, i) => (\n            <div key={`b-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+      "target": "@components/wensity/scroll-area.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ScrollArea as BaseScrollArea } from \"@base-ui/react/scroll-area\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport type ScrollAreaOrientation = \"vertical\" | \"horizontal\" | \"both\";\nexport type ScrollAreaHideStrategy = \"auto\" | \"never\";\n\nexport interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {\n  orientation?: ScrollAreaOrientation;\n  hideScrollbar?: ScrollAreaHideStrategy;\n}\n\n/* ─── Scrollbar chrome ──────────────────────────────────────── */\n\n/**\n * Auto-hide uses opacity only (~150ms). Opacity fades are fine under\n * prefers-reduced-motion — they do not convey essential motion.\n */\nconst scrollbarTrackClass = cn(\n  \"flex touch-none select-none p-0.5 transition-opacity duration-150\",\n  \"data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2.5\",\n  \"data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:w-full\",\n);\n\nconst scrollbarThumbClass = cn(\n  \"relative flex-1 rounded-full bg-[var(--border-strong)]\",\n  \"before:absolute before:content-[''] before:left-1/2 before:top-1/2 before:size-full\",\n  \"before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2\",\n);\n\nfunction Scrollbar({\n  orientation,\n  hideScrollbar,\n}: {\n  orientation: \"vertical\" | \"horizontal\";\n  hideScrollbar: ScrollAreaHideStrategy;\n}) {\n  return (\n    <BaseScrollArea.Scrollbar\n      orientation={orientation}\n      className={cn(\n        scrollbarTrackClass,\n        hideScrollbar === \"auto\" &&\n          \"opacity-0 data-[hovering]:opacity-100 data-[scrolling]:opacity-100\",\n        hideScrollbar === \"never\" && \"opacity-100\",\n      )}\n    >\n      <BaseScrollArea.Thumb className={scrollbarThumbClass} />\n    </BaseScrollArea.Scrollbar>\n  );\n}\n\n/* ─── <ScrollArea> ──────────────────────────────────────────── */\n\nexport const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(\n  (\n    {\n      className,\n      orientation = \"vertical\",\n      hideScrollbar = \"auto\",\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const showVertical = orientation === \"vertical\" || orientation === \"both\";\n    const showHorizontal = orientation === \"horizontal\" || orientation === \"both\";\n\n    return (\n      <BaseScrollArea.Root\n        ref={ref}\n        data-slot=\"scroll-area\"\n        data-orientation={orientation}\n        data-hide-scrollbar={hideScrollbar}\n        className={cn(\"relative\", className)}\n        {...props}\n      >\n        <BaseScrollArea.Viewport\n          // Focusable when scrollable so keyboard users can arrow/Page scroll.\n          tabIndex={0}\n          className={cn(\n            \"size-full rounded-[inherit] outline-none\",\n            \"focus-visible:ring-2 focus-visible:ring-[var(--primitive-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]\",\n          )}\n        >\n          <BaseScrollArea.Content className=\"min-w-full\">\n            {children}\n          </BaseScrollArea.Content>\n        </BaseScrollArea.Viewport>\n        {showVertical ? (\n          <Scrollbar orientation=\"vertical\" hideScrollbar={hideScrollbar} />\n        ) : null}\n        {showHorizontal ? (\n          <Scrollbar orientation=\"horizontal\" hideScrollbar={hideScrollbar} />\n        ) : null}\n        {orientation === \"both\" ? <BaseScrollArea.Corner /> : null}\n      </BaseScrollArea.Root>\n    );\n  },\n);\nScrollArea.displayName = \"ScrollArea\";\n"
     }
   ],
   "cssVars": {
@@ -276,20 +277,20 @@
       }
     }
   },
-  "docs": "Free Wensity component. Installs to @components/wensity/infinite-marquee.tsx. For Pro components and updates, use pnpm dlx wensity@latest add infinite-marquee.",
+  "docs": "Free Wensity component. Installs to @components/wensity/scroll-area.tsx. For Pro components and updates, use pnpm dlx wensity@latest add scroll-area.",
   "categories": [
-    "Cinematic Interactions",
+    "UI Primitives",
     "wensity",
     "free"
   ],
   "meta": {
     "wensity": {
-      "slug": "infinite-marquee",
+      "slug": "scroll-area",
       "access": "free",
-      "category": "Cinematic Interactions",
-      "componentUrl": "https://ui.wensity.com/components/infinite-marquee",
-      "shadcnUrl": "https://ui.wensity.com/r/infinite-marquee",
-      "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/scroll-area",
+      "shadcnUrl": "https://ui.wensity.com/r/scroll-area",
+      "cliInstall": "pnpm dlx wensity@latest add scroll-area"
     }
   }
 }

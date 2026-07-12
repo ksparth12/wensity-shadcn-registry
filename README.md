@@ -35,7 +35,6 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 - `switch` - Switch
 - `radio-group` - Radio Group
 - `toggle` - Toggle
-- `bento-grid` - Bento Grid
 - `label` - Label
 - `input-otp` - Input OTP
 - `combobox` - Combobox
@@ -56,8 +55,31 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 - `pagination` - Pagination
 - `card` - Card
 - `separator` - Separator
+- `scroll-area` - Scroll Area
 - `resizable` - Resizable
 - `hover-card` - Hover Card
+- `accordion` - Accordion
+- `aspect-ratio` - Aspect Ratio
+- `attachment` - Attachment
+- `calendar` - Calendar
+- `carousel` - Carousel
+- `chart` - Chart
+- `collapsible` - Collapsible
+- `slider` - Slider
+- `command` - Command
+- `context-menu` - Context Menu
+- `data-table` - Data Table
+- `date-picker` - Date Picker
+- `direction` - Direction
+- `dropdown-menu` - Dropdown Menu
+- `empty-state` - Empty State
+- `field` - Field
+- `kbd` - Kbd
+- `marker` - Marker
+- `native-select` - Native Select
+- `navigation-menu` - Navigation Menu
+- `sidebar` - Sidebar
+- `typography` - Typography
 
 ## Source
 

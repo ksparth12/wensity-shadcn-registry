@@ -1,11 +1,12 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "infinite-marquee",
+  "name": "direction",
   "type": "registry:block",
-  "title": "Infinite Marquee",
-  "description": "Your logos scroll forever. Silky, seamless, fading softly at both edges.",
+  "title": "Direction",
+  "description": "A layout wrapper that sets the `dir` attribute and provides direction context to children. Supports explicit LTR/RTL, dynamic detection from language tags, and the `asChild` pattern for flexible composition.",
   "author": "Wensity <hey@wensity.com>",
   "dependencies": [
+    "@base-ui/react",
     "clsx",
     "tailwind-merge"
   ],
@@ -18,10 +19,10 @@
       "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
     },
     {
-      "path": "registry/wensity/infinite-marquee.tsx",
+      "path": "registry/wensity/direction.tsx",
       "type": "registry:component",
-      "target": "@components/wensity/infinite-marquee.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface InfiniteMarqueeProps {\n  /** Items rendered exactly twice (for seamless loop). */\n  items: React.ReactNode[];\n  /** Cycle duration in seconds (lower = faster). */\n  speed?: number;\n  /** Animation direction. */\n  direction?: \"left\" | \"right\";\n  /** Pause the loop when the cursor enters. Off by default — most marketing\n   *  marquees should keep moving so they never feel \"stuck\" mid-page. */\n  pauseOnHover?: boolean;\n  /** Tailwind gap class between items, e.g. \"gap-10\". */\n  gap?: string;\n  /** Apply the soft mask-image fade at both edges. */\n  fade?: boolean;\n  className?: string;\n}\n\n/**\n * InfiniteMarquee\n *\n * Zero-jitter, GPU-only horizontal marquee. We duplicate the children once\n * and animate from `translate3d(0,0,0)` → `translate3d(-50%,0,0)` via a CSS\n * keyframe (defined in `globals.css`), so the work stays on the compositor\n * and never touches the JS thread.\n */\nexport function InfiniteMarquee({\n  items,\n  speed = 30,\n  direction = \"left\",\n  pauseOnHover = false,\n  gap = \"gap-20\",\n  fade = true,\n  className,\n}: InfiniteMarqueeProps) {\n  return (\n    <div\n      className={cn(\n        \"group/marquee relative w-full overflow-hidden\",\n        fade && [\n          \"[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n          \"[-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]\",\n        ],\n        className\n      )}\n    >\n      <div\n        className={cn(\n          \"flex w-max items-center will-change-transform\",\n          // Honour the OS reduced-motion preference — freeze the loop.\n          \"motion-reduce:![animation:none]\",\n          gap\n        )}\n        style={{\n          animation: `${\n            direction === \"left\" ? \"wensity-marquee-x\" : \"wensity-marquee-x-reverse\"\n          } ${speed}s linear infinite`,\n          animationPlayState: \"running\",\n        }}\n        onMouseEnter={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"paused\";\n        }}\n        onMouseLeave={(e) => {\n          if (pauseOnHover) e.currentTarget.style.animationPlayState = \"running\";\n        }}\n      >\n        {/* Original strip */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden={false}>\n          {items.map((node, i) => (\n            <div key={`a-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n        {/* Duplicate — exactly once — for the seamless wrap at -50%. */}\n        <div className={cn(\"flex shrink-0 items-center\", gap)} aria-hidden>\n          {items.map((node, i) => (\n            <div key={`b-${i}`} className=\"shrink-0\">\n              {node}\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n}\n"
+      "target": "@components/wensity/direction.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { DirectionProvider } from \"@base-ui/react/direction-provider\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport type DirectionValue = \"ltr\" | \"rtl\";\n\nexport interface DirectionProps {\n  /** Explicit direction. When omitted with `dynamic`, determined from `lang`. */\n  direction?: DirectionValue;\n  /** Auto-detect direction from the `lang` prop. */\n  dynamic?: boolean;\n  /** BCP 47 language tag used with `dynamic` mode (e.g. \"en\", \"ar\", \"he\"). */\n  lang?: string;\n  /** Merge onto the child element instead of wrapping in a div. */\n  asChild?: boolean;\n  /** Additional class name on the wrapper. */\n  className?: string;\n  children?: React.ReactNode;\n}\n\n/* ─── RTL language set ──────────────────────────────────────── */\n\nconst RTL_LANGUAGES = new Set([\n  \"ae\", \"ar\", \"arc\", \"bcc\", \"bqi\", \"ckb\", \"dv\", \"fa\", \"glk\", \"ha\",\n  \"he\", \"khw\", \"ks\", \"ku\", \"mzn\", \"pnb\", \"ps\", \"sd\", \"syr\", \"ug\",\n  \"ur\", \"uz_AF\", \"yi\",\n]);\n\nfunction isRTL(lang?: string): boolean {\n  if (!lang) return false;\n  const primary = lang.split(\"-\")[0].toLowerCase();\n  return RTL_LANGUAGES.has(primary);\n}\n\n/* ─── Context ───────────────────────────────────────────────── */\n\ntype DirectionContextValue = {\n  direction: DirectionValue;\n};\n\nconst DirectionContext = React.createContext<DirectionContextValue>({\n  direction: \"ltr\",\n});\n\n/** Wensity public API — returns `{ direction }`. */\nexport function useDirection(): DirectionContextValue {\n  return React.useContext(DirectionContext);\n}\n\n/* ─── Direction ─────────────────────────────────────────────── */\n\nexport function Direction({\n  direction: directionProp,\n  dynamic = false,\n  lang,\n  asChild = false,\n  className,\n  children,\n}: DirectionProps) {\n  const resolved = React.useMemo<DirectionValue>(() => {\n    if (directionProp) return directionProp;\n    if (dynamic && lang) return isRTL(lang) ? \"rtl\" : \"ltr\";\n    return \"ltr\";\n  }, [directionProp, dynamic, lang]);\n\n  const asChildElement =\n    asChild && React.isValidElement(children) ? children : null;\n\n  const asChildRendered = useRender({\n    enabled: Boolean(asChildElement),\n    render: asChildElement ?? undefined,\n    props: {\n      dir: resolved,\n      className: cn(\n        asChildElement && React.isValidElement(asChildElement)\n          ? (asChildElement.props as { className?: string }).className\n          : undefined,\n        className,\n      ),\n    },\n  });\n\n  return (\n    <DirectionProvider direction={resolved}>\n      <DirectionContext.Provider value={{ direction: resolved }}>\n        {asChildRendered ? (\n          asChildRendered\n        ) : (\n          <div dir={resolved} className={cn(className)}>\n            {children}\n          </div>\n        )}\n      </DirectionContext.Provider>\n    </DirectionProvider>\n  );\n}\n"
     }
   ],
   "cssVars": {
@@ -276,20 +277,20 @@
       }
     }
   },
-  "docs": "Free Wensity component. Installs to @components/wensity/infinite-marquee.tsx. For Pro components and updates, use pnpm dlx wensity@latest add infinite-marquee.",
+  "docs": "Free Wensity component. Installs to @components/wensity/direction.tsx. For Pro components and updates, use pnpm dlx wensity@latest add direction.",
   "categories": [
-    "Cinematic Interactions",
+    "UI Primitives",
     "wensity",
     "free"
   ],
   "meta": {
     "wensity": {
-      "slug": "infinite-marquee",
+      "slug": "direction",
       "access": "free",
-      "category": "Cinematic Interactions",
-      "componentUrl": "https://ui.wensity.com/components/infinite-marquee",
-      "shadcnUrl": "https://ui.wensity.com/r/infinite-marquee",
-      "cliInstall": "pnpm dlx wensity@latest add infinite-marquee"
+      "category": "UI Primitives",
+      "componentUrl": "https://ui.wensity.com/primitives/direction",
+      "shadcnUrl": "https://ui.wensity.com/r/direction",
+      "cliInstall": "pnpm dlx wensity@latest add direction"
     }
   }
 }
