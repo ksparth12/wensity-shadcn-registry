@@ -1,18 +1,30 @@
 # Wensity shadcn Registry
 
-Public, free-only shadcn registry artifacts for Wensity components.
+Public, free-only shadcn registry artifacts for Wensity components, fonts, and primitive design-system tokens.
 
-The private Wensity product repository is not mirrored here. This repo contains only generated JSON registry payloads for free components. Wensity Pro components remain available through the authenticated Wensity CLI.
+The private Wensity product repository is not mirrored here. This repo contains only generated JSON registry payloads for free components and public support items. Wensity Pro components remain available through the authenticated Wensity CLI.
 
 ## Usage
 
 Install a free component with shadcn:
 
 ```bash
-npx shadcn@latest add @wensity/liquid-multimodal-input
+npx shadcn@latest add @wensity/font-inter
 ```
 
 The `@wensity` namespace is registered in shadcn's public registry index and resolves to these free-only JSON artifacts.
+
+Install the base token contract with shadcn:
+
+```bash
+npx shadcn@latest add @wensity/wensity-base
+```
+
+## Support Items
+
+- `font-inter` - Inter Font
+- `font-geist` - Geist Font
+- `wensity-base` - Wensity Base
 
 ## Components
 
@@ -20,12 +32,15 @@ The `@wensity` namespace is registered in shadcn's public registry index and res
 - `generative-skeleton-mesh` - Generative Skeleton Mesh
 - `voice-aurora-wave` - Voice Aurora Wave
 - `model-context-switcher` - Model Context Switcher
-- `dynamic-island-toast` - Dynamic Island Toast
 - `infinite-marquee` - Infinite Marquee
-- `apple-sticky-scroll-sequence` - Apple-Style Sticky Scroll
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
+- `gooey-navigation-menu` - Gooey Navigation Menu
+- `multi-select-token-pills` - Multi-Select Token Pills
+- `shimmering-skeleton-wrapper` - Shimmering Skeleton Wrapper
+- `github-activity-grid` - GitHub-Style Activity Grid
 - `button` - Button
+- `button-group` - Button Group
 - `input` - Input
 - `text-area` - Text Area
 - `select` - Select

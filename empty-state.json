@@ -22,7 +22,7 @@
       "path": "registry/wensity/empty-state.tsx",
       "type": "registry:component",
       "target": "@components/wensity/empty-state.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion, useReducedMotion } from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport interface EmptyStateProps {\n  /** Large icon or illustration displayed above the text. */\n  icon?: React.ReactNode;\n  /** Primary heading. */\n  title: string;\n  /** Supporting description beneath the title. */\n  description?: string;\n  /** Optional action slot. Pass a single button, a button group, or an input. */\n  action?: React.ReactNode;\n  /** Optional footer slot rendered below the action (links, secondary text). */\n  footer?: React.ReactNode;\n  /** Additional class name on the root wrapper. */\n  className?: string;\n}\n\n/* ─── EmptyState ────────────────────────────────────────────── */\n\nexport function EmptyState({\n  icon,\n  title,\n  description,\n  action,\n  footer,\n  className,\n}: EmptyStateProps) {\n  const reduceMotion = useReducedMotion();\n\n  return (\n    <div data-wensity-primitive=\"\"\n      className={cn(\n        \"flex flex-col items-center justify-center gap-4 px-6 py-12 text-center\",\n        className,\n      )}\n    >\n      {icon && (\n        <motion.div\n          initial={reduceMotion ? undefined : { opacity: 0, scale: 0.92 }}\n          animate={{ opacity: 1, scale: 1 }}\n          transition={{ type: \"spring\", stiffness: 360, damping: 28, mass: 0.6 }}\n        >\n          {icon}\n        </motion.div>\n      )}\n      <div className=\"flex flex-col items-center gap-1.5\">\n        <p className=\"text-[15px] font-semibold tracking-[-0.01em] text-[var(--foreground)]\">\n          {title}\n        </p>\n        {description && (\n          <p className=\"max-w-[22rem] text-[13px] leading-relaxed text-[var(--muted-foreground)]\">\n            {description}\n          </p>\n        )}\n      </div>\n      {action && <div className=\"flex flex-wrap items-center justify-center gap-2\">{action}</div>}\n      {footer && <div>{footer}</div>}\n    </div>\n  );\n}\n\n/* ─── Illustrations (icon slots) ────────────────────────────── */\n\n/** A subtle, larger icon container for the illustration variant. */\nexport function EmptyStateIllustration({\n  children,\n  className,\n}: {\n  children: React.ReactNode;\n  className?: string;\n}) {\n  return (\n    <div\n      className={cn(\n        \"flex size-16 items-center justify-center rounded-[var(--primitive-radius-surface)]\",\n        \"border border-[var(--border)]\",\n        \"bg-[color-mix(in_srgb,var(--foreground)_3%,var(--background))]\",\n        \"text-[var(--muted-foreground)]\",\n        className,\n      )}\n    >\n      {children}\n    </div>\n  );\n}\n\n"
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { motion, useReducedMotion } from \"framer-motion\";\nimport { cn } from \"@/lib/utils\";\n\n/* ─── Types ─────────────────────────────────────────────────── */\n\nexport interface EmptyStateProps {\n  /** Large icon or illustration displayed above the text. */\n  icon?: React.ReactNode;\n  /** Primary heading. */\n  title: string;\n  /** Supporting description beneath the title. */\n  description?: string;\n  /** Optional action slot. Pass a single button, a button group, or an input. */\n  action?: React.ReactNode;\n  /** Optional footer slot rendered below the action (links, secondary text). */\n  footer?: React.ReactNode;\n  /** Additional class name on the root wrapper. */\n  className?: string;\n}\n\n/* ─── EmptyState ────────────────────────────────────────────── */\n\nexport function EmptyState({\n  icon,\n  title,\n  description,\n  action,\n  footer,\n  className,\n}: EmptyStateProps) {\n  const reduceMotion = useReducedMotion();\n\n  return (\n    <div data-wensity-primitive=\"\"\n      className={cn(\n        \"flex flex-col items-center justify-center gap-4 px-6 py-12 text-center\",\n        className,\n      )}\n    >\n      {icon && (\n        <motion.div\n          initial={reduceMotion ? undefined : { opacity: 0, scale: 0.92 }}\n          animate={{ opacity: 1, scale: 1 }}\n          transition={{ type: \"spring\", stiffness: 360, damping: 28, mass: 0.6 }}\n        >\n          {icon}\n        </motion.div>\n      )}\n      <div className=\"flex flex-col items-center gap-1.5\">\n        <p className=\"font-[family-name:var(--primitive-font-display)] text-[15px] font-semibold tracking-[-0.01em] text-[var(--foreground)]\">\n          {title}\n        </p>\n        {description && (\n          <p className=\"max-w-[22rem] text-[13px] leading-relaxed text-[var(--muted-foreground)]\">\n            {description}\n          </p>\n        )}\n      </div>\n      {action && <div className=\"flex flex-wrap items-center justify-center gap-2\">{action}</div>}\n      {footer && <div>{footer}</div>}\n    </div>\n  );\n}\n\n/* ─── Illustrations (icon slots) ────────────────────────────── */\n\n/** A subtle, larger icon container for the illustration variant. */\nexport function EmptyStateIllustration({\n  children,\n  className,\n}: {\n  children: React.ReactNode;\n  className?: string;\n}) {\n  return (\n    <div\n      className={cn(\n        \"flex size-16 items-center justify-center rounded-[var(--primitive-radius-surface)]\",\n        \"border border-[var(--border)]\",\n        \"bg-[color-mix(in_srgb,var(--foreground)_3%,var(--background))]\",\n        \"text-[var(--muted-foreground)]\",\n        className,\n      )}\n    >\n      {children}\n    </div>\n  );\n}\n\n"
     }
   ],
   "cssVars": {
@@ -201,12 +201,12 @@
       "primitive-chart-6": "#e66767",
       "primitive-text-inverse": "#151719",
       "primitive-text-hint": "0.6875rem",
-      "primitive-destructive": "#d93b2b",
-      "primitive-destructive-hover": "#b83224",
-      "primitive-destructive-active": "#9c2a1f",
+      "primitive-destructive": "#e11d2e",
+      "primitive-destructive-hover": "#c1121f",
+      "primitive-destructive-active": "#a4161a",
       "primitive-destructive-foreground": "#ffffff",
-      "primitive-destructive-surface": "rgba(217, 59, 43, 0.12)",
-      "primitive-destructive-border": "rgba(217, 59, 43, 0.50)",
+      "primitive-destructive-surface": "rgba(225, 29, 46, 0.12)",
+      "primitive-destructive-border": "rgba(225, 29, 46, 0.52)",
       "primitive-success": "#34d399",
       "primitive-success-surface": "rgba(52, 211, 153, 0.12)",
       "primitive-success-border": "rgba(52, 211, 153, 0.45)",
@@ -234,8 +234,10 @@
     }
   },
   "css": {
-    ":where([data-wensity-primitive])": {
-      "font-family": "var(--primitive-font-sans)"
+    "@layer base": {
+      ":where([data-wensity-primitive])": {
+        "font-family": "var(--primitive-font-sans)"
+      }
     },
     "@utility scrollbar-hidden": {
       "scrollbar-width": "none",
@@ -288,6 +290,7 @@
       "slug": "empty-state",
       "access": "free",
       "category": "UI Primitives",
+      "kind": "component",
       "componentUrl": "https://ui.wensity.com/primitives/empty-state",
       "shadcnUrl": "https://ui.wensity.com/r/empty-state",
       "cliInstall": "pnpm dlx wensity@latest add empty-state"

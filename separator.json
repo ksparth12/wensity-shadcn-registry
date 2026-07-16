@@ -200,12 +200,12 @@
       "primitive-chart-6": "#e66767",
       "primitive-text-inverse": "#151719",
       "primitive-text-hint": "0.6875rem",
-      "primitive-destructive": "#d93b2b",
-      "primitive-destructive-hover": "#b83224",
-      "primitive-destructive-active": "#9c2a1f",
+      "primitive-destructive": "#e11d2e",
+      "primitive-destructive-hover": "#c1121f",
+      "primitive-destructive-active": "#a4161a",
       "primitive-destructive-foreground": "#ffffff",
-      "primitive-destructive-surface": "rgba(217, 59, 43, 0.12)",
-      "primitive-destructive-border": "rgba(217, 59, 43, 0.50)",
+      "primitive-destructive-surface": "rgba(225, 29, 46, 0.12)",
+      "primitive-destructive-border": "rgba(225, 29, 46, 0.52)",
       "primitive-success": "#34d399",
       "primitive-success-surface": "rgba(52, 211, 153, 0.12)",
       "primitive-success-border": "rgba(52, 211, 153, 0.45)",
@@ -233,8 +233,10 @@
     }
   },
   "css": {
-    ":where([data-wensity-primitive])": {
-      "font-family": "var(--primitive-font-sans)"
+    "@layer base": {
+      ":where([data-wensity-primitive])": {
+        "font-family": "var(--primitive-font-sans)"
+      }
     },
     "@utility scrollbar-hidden": {
       "scrollbar-width": "none",
@@ -287,6 +289,7 @@
       "slug": "separator",
       "access": "free",
       "category": "UI Primitives",
+      "kind": "component",
       "componentUrl": "https://ui.wensity.com/primitives/separator",
       "shadcnUrl": "https://ui.wensity.com/r/separator",
       "cliInstall": "pnpm dlx wensity@latest add separator"

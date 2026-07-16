@@ -1,29 +1,16 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "label",
-  "type": "registry:block",
-  "title": "Label",
-  "description": "A polished label primitive for forms, settings, and field groups.",
+  "name": "wensity-base",
+  "type": "registry:base",
+  "title": "Wensity Base",
+  "description": "Wensity primitive design-system tokens for shadcn projects: fonts, base colors, controls, charts, radii, overlays, and motion.",
   "author": "Wensity <hey@wensity.com>",
-  "dependencies": [
-    "clsx",
-    "tailwind-merge"
+  "dependencies": [],
+  "registryDependencies": [
+    "@wensity/font-inter",
+    "@wensity/font-geist"
   ],
-  "registryDependencies": [],
-  "files": [
-    {
-      "path": "registry/wensity/lib/utils.ts",
-      "type": "registry:lib",
-      "target": "@lib/utils.ts",
-      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
-    },
-    {
-      "path": "registry/wensity/label.tsx",
-      "type": "registry:component",
-      "target": "@components/wensity/label.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport type LabelVariant =\n  | \"default\"\n  | \"required\"\n  | \"optional\"\n  | \"muted\"\n  | \"inline\";\n\nexport interface LabelProps\n  extends React.LabelHTMLAttributes<HTMLLabelElement> {\n  variant?: LabelVariant;\n  /** Secondary copy shown beside the label text — most useful with `inline`. */\n  hint?: React.ReactNode;\n  disabled?: boolean;\n}\n\nconst base = \"text-[13px] leading-none tracking-[-0.01em]\";\n\nconst variantClasses: Record<LabelVariant, string> = {\n  default: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  required: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  optional: cn(base, \"mb-2 block font-medium text-[var(--foreground)]\"),\n  muted: cn(\n    base,\n    \"block text-[12px] font-normal leading-[1.4] text-[var(--primitive-text-secondary)]\",\n  ),\n  inline: cn(\n    base,\n    \"inline-flex min-w-[7.5rem] items-center gap-2 font-medium text-[var(--foreground)]\",\n  ),\n};\n\nfunction RequiredMarker() {\n  return (\n    <span\n      aria-hidden=\"true\"\n      className=\"ml-1 font-medium text-[var(--primitive-destructive)]\"\n    >\n      *\n    </span>\n  );\n}\n\nfunction OptionalMarker() {\n  return (\n    <span\n      role=\"note\"\n      className=\"ml-2 text-[length:var(--primitive-text-hint)] font-medium text-[var(--primitive-text-secondary)]\"\n    >\n      Optional\n    </span>\n  );\n}\n\nexport const labelVariants = variantClasses;\n\nexport function Label({\n  variant = \"default\",\n  hint,\n  disabled = false,\n  className,\n  children,\n  ...props\n}: LabelProps) {\n  const showRequired = variant === \"required\";\n  const showOptional = variant === \"optional\";\n  const isInline = variant === \"inline\";\n\n  return (\n    <label data-wensity-primitive=\"\"\n      data-slot=\"label\"\n      data-variant={variant}\n      data-disabled={disabled ? \"\" : undefined}\n      className={cn(\n        variantClasses[variant],\n        disabled && \"cursor-not-allowed opacity-45\",\n        className,\n      )}\n      {...props}\n    >\n      <span className={cn(isInline && \"inline-flex items-center gap-2\")}>\n        <span>{children}</span>\n        {showRequired ? <RequiredMarker /> : null}\n        {showOptional ? <OptionalMarker /> : null}\n        {hint ? (\n          <span\n            className={cn(\n              \"font-normal text-[var(--primitive-text-secondary)]\",\n              isInline ? \"text-[12px]\" : \"mt-1 block text-[12px] leading-[1.45]\",\n            )}\n          >\n            {hint}\n          </span>\n        ) : null}\n      </span>\n    </label>\n  );\n}\n"
-    }
-  ],
+  "files": [],
   "cssVars": {
     "theme": {
       "font-sans": "var(--font-satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)",
@@ -278,21 +265,22 @@
       }
     }
   },
-  "docs": "Free Wensity component. Installs to @components/wensity/label.tsx. For Pro components and updates, use pnpm dlx wensity@latest add label.",
+  "docs": "Installs the public Wensity primitive token contract for external shadcn projects. Wensity CLI presets remain the richer path for generated project-specific token sets.",
   "categories": [
-    "UI Primitives",
     "wensity",
+    "base",
+    "design-system",
     "free"
   ],
   "meta": {
     "wensity": {
-      "slug": "label",
+      "slug": "wensity-base",
       "access": "free",
-      "category": "UI Primitives",
-      "kind": "component",
-      "componentUrl": "https://ui.wensity.com/primitives/label",
-      "shadcnUrl": "https://ui.wensity.com/r/label",
-      "cliInstall": "pnpm dlx wensity@latest add label"
+      "category": "base",
+      "kind": "base",
+      "componentUrl": "https://ui.wensity.com/docs/primitives/setup",
+      "shadcnUrl": "https://ui.wensity.com/r/wensity-base",
+      "cliInstall": "pnpm dlx wensity@latest init --preset <preset-code>"
     }
   }
 }
