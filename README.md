@@ -35,10 +35,31 @@ npx shadcn@latest add @wensity/wensity-base
 - `infinite-marquee` - Infinite Marquee
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
+- `animated-tabs` - Animated Tabs
 - `gooey-navigation-menu` - Gooey Navigation Menu
 - `multi-select-token-pills` - Multi-Select Token Pills
 - `shimmering-skeleton-wrapper` - Shimmering Skeleton Wrapper
+- `cool-button` - Cool Button
+- `file-uploader` - File Uploader
+- `before-after-card` - Before After Card
 - `github-activity-grid` - GitHub-Style Activity Grid
+- `text-shimmer` - Text Shimmer
+- `text-flip` - Text Flip
+- `text-morphing` - Text Morphing
+- `text-char-slide` - Text Char Slide
+- `text-motion` - Text Motion
+- `text-cycle` - Text Cycle
+- `text-word-flip` - Text Word Flip
+- `text-blur-reveal` - Text Blur Reveal
+- `canvas-text` - Canvas Text
+- `line-fill-text` - Line Fill Text
+- `text-glitch` - Text Glitch
+- `text-path` - Text Path
+- `text-highlight` - Text Highlight
+- `text-scribble` - Text Scribble
+- `text-chroma-reveal` - Text Chroma Reveal
+- `text-spectrum` - Text Spectrum
+- `text-ripple` - Text Ripple
 - `button` - Button
 - `button-group` - Button Group
 - `input` - Input
