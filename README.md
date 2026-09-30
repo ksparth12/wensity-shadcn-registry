@@ -28,8 +28,8 @@ npx shadcn@latest add @wensity/wensity-base
 
 ## Components
 
-- `liquid-multimodal-input` - Liquid Multimodal Input
-- `generative-skeleton-mesh` - Generative Skeleton Mesh
+- `liquid-multimodal-input` - AI Prompt Input
+- `generative-skeleton-mesh` - Animated Loading Skeleton
 - `voice-aurora-wave` - Voice Aurora Wave
 - `model-context-switcher` - Model Context Switcher
 - `infinite-marquee` - Infinite Marquee
@@ -41,7 +41,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `shimmering-skeleton-wrapper` - Shimmering Skeleton Wrapper
 - `cool-button` - Cool Button
 - `file-uploader` - File Uploader
-- `before-after-card` - Before After Card
+- `before-after-card` - Image Comparison Slider
 - `github-activity-grid` - GitHub-Style Activity Grid
 - `text-shimmer` - Text Shimmer
 - `text-flip` - Text Flip
@@ -116,6 +116,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `navigation-menu` - Navigation Menu
 - `sidebar` - Sidebar
 - `typography` - Typography
+- `color-picker` - Color Picker
 
 ## Source
 
