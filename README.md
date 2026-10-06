@@ -30,19 +30,19 @@ npx shadcn@latest add @wensity/wensity-base
 
 - `liquid-multimodal-input` - AI Prompt Input
 - `generative-skeleton-mesh` - Animated Loading Skeleton
-- `voice-aurora-wave` - Voice Aurora Wave
-- `model-context-switcher` - Model Context Switcher
+- `voice-aurora-wave` - Voice Reactive Orb
+- `model-context-switcher` - AI Model Selector
 - `infinite-marquee` - Infinite Marquee
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
 - `animated-tabs` - Animated Tabs
-- `gooey-navigation-menu` - Gooey Navigation Menu
-- `multi-select-token-pills` - Multi-Select Token Pills
+- `multi-select-token-pills` - Multi-Select Tag Input
 - `shimmering-skeleton-wrapper` - Shimmering Skeleton Wrapper
 - `cool-button` - Cool Button
 - `file-uploader` - File Uploader
 - `before-after-card` - Image Comparison Slider
 - `github-activity-grid` - GitHub-Style Activity Grid
+- `gooey-navigation-menu` - Gooey Navigation Menu
 - `text-shimmer` - Text Shimmer
 - `text-flip` - Text Flip
 - `text-morphing` - Text Morphing
@@ -51,7 +51,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `text-cycle` - Text Cycle
 - `text-word-flip` - Text Word Flip
 - `text-blur-reveal` - Text Blur Reveal
-- `canvas-text` - Canvas Text
+- `canvas-text` - Particle Text
 - `line-fill-text` - Line Fill Text
 - `text-glitch` - Text Glitch
 - `text-path` - Text Path
