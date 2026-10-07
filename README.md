@@ -36,11 +36,13 @@ npx shadcn@latest add @wensity/wensity-base
 - `morphing-shape-background` - Morphing Shape Background
 - `scrubbable-video-reveal` - Scrubbable Video Reveal
 - `animated-tabs` - Animated Tabs
+- `blob-animation` - Blob Animation
 - `multi-select-token-pills` - Multi-Select Tag Input
 - `shimmering-skeleton-wrapper` - Shimmering Skeleton Wrapper
 - `cool-button` - Cool Button
 - `file-uploader` - File Uploader
 - `before-after-card` - Image Comparison Slider
+- `progressive-image-loading` - Progressive Image Loading
 - `github-activity-grid` - GitHub-Style Activity Grid
 - `gooey-navigation-menu` - Gooey Navigation Menu
 - `text-shimmer` - Text Shimmer
@@ -60,6 +62,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `text-chroma-reveal` - Text Chroma Reveal
 - `text-spectrum` - Text Spectrum
 - `text-ripple` - Text Ripple
+- `underline-animation` - Underline Animation
 - `button` - Button
 - `button-group` - Button Group
 - `input` - Input
