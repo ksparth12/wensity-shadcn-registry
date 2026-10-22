@@ -66,7 +66,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `button` - Button
 - `button-group` - Button Group
 - `input` - Input
-- `text-area` - Text Area
+- `text-area` - Textarea
 - `select` - Select
 - `form-field` - Form Field
 - `badge` - Badge
@@ -114,7 +114,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `empty-state` - Empty State
 - `field` - Field
 - `kbd` - Kbd
-- `marker` - Marker
+- `marker` - Status Indicator
 - `native-select` - Native Select
 - `navigation-menu` - Navigation Menu
 - `sidebar` - Sidebar
