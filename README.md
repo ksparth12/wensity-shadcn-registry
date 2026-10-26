@@ -43,6 +43,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `file-uploader` - File Uploader
 - `before-after-card` - Image Comparison Slider
 - `progressive-image-loading` - Progressive Image Loading
+- `animated-hamburger-menu` - Animated Hamburger Menu
 - `github-activity-grid` - GitHub-Style Activity Grid
 - `gooey-navigation-menu` - Gooey Navigation Menu
 - `text-shimmer` - Text Shimmer
