@@ -63,6 +63,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `text-spectrum` - Text Spectrum
 - `text-ripple` - Text Ripple
 - `underline-animation` - Underline Animation
+- `count-up-animation` - Count Up Animation
 - `button` - Button
 - `button-group` - Button Group
 - `input` - Input
