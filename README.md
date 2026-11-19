@@ -123,6 +123,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `sidebar` - Sidebar
 - `typography` - Typography
 - `color-picker` - Color Picker
+- `number-input` - Number Input
 
 ## Source
 
