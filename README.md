@@ -45,6 +45,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `progressive-image-loading` - Progressive Image Loading
 - `animated-hamburger-menu` - Animated Hamburger Menu
 - `star-rating` - Star Rating
+- `copy-button` - Copy Button
 - `github-activity-grid` - GitHub-Style Activity Grid
 - `gooey-navigation-menu` - Gooey Navigation Menu
 - `text-shimmer` - Text Shimmer
