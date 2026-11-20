@@ -46,6 +46,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `animated-hamburger-menu` - Animated Hamburger Menu
 - `star-rating` - Star Rating
 - `copy-button` - Copy Button
+- `cookie-banner` - Cookie Banner
 - `github-activity-grid` - GitHub-Style Activity Grid
 - `gooey-navigation-menu` - Gooey Navigation Menu
 - `text-shimmer` - Text Shimmer
