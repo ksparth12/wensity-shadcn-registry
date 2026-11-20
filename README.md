@@ -127,6 +127,7 @@ npx shadcn@latest add @wensity/wensity-base
 - `typography` - Typography
 - `color-picker` - Color Picker
 - `number-input` - Number Input
+- `time-picker` - Time Picker
 
 ## Source
 
